@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 const userSchema = new Schema({
     name: {
@@ -18,7 +18,8 @@ const userSchema = new Schema({
         type: String,
     },
     security_userId: {
-        type: String,
+        type: Types.ObjectId,
+        required: true,
     },
 });
 

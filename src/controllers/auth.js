@@ -18,10 +18,12 @@ const registerUser = async (userData) => {
     } catch (error) {
         const errorMessage = {
             error: true,
-            message: `${Object.keys(error.keyValue)[0]} is ${
-                errorCodes[error.code].message
-            }`,
+            message:
+                "Something went wrong!! Please contact system administrator",
         };
+        if (error.message.includes("duplicate")) {
+            errorMessage.message = "User already exists";
+        }
         return errorMessage;
     }
 };

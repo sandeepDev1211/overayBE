@@ -1,4 +1,3 @@
-import errorCodes from "../database/exceptionMapping.js";
 import schemas from "../database/schemas/index.js";
 import jwtHelper from "../middleware/jwtHelper.js";
 import bcrypt from "bcryptjs";

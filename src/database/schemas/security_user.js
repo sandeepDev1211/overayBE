@@ -30,6 +30,10 @@ const userSchema = new Schema({
         type: Boolean,
         default: true,
     },
+    isInternal: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 export default model("security_user", userSchema);

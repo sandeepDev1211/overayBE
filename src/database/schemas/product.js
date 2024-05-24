@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 const productSchema = new Schema({
     name: {
@@ -16,6 +16,13 @@ const productSchema = new Schema({
     },
     discount: {
         type: Number,
+        require: true,
+    },
+    parent_id: {
+        type: Types.ObjectId,
+    },
+    categories: {
+        type: Array.of(Types.ObjectId),
         require: true,
     },
 });

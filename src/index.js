@@ -8,6 +8,7 @@ import http from "http";
 import { typeDefs } from "./graphql/typeDefs.js";
 import { resolvers } from "./graphql/resolvers.js";
 import jwtHelper from "./middleware/jwtHelper.js";
+import admin from "./routes/admin/index.js";
 
 (async () => {
     databaseOperations.createConnection();
@@ -36,6 +37,7 @@ import jwtHelper from "./middleware/jwtHelper.js";
             context: async ({ req }) => ({ user: req.user }),
         })
     );
+    app.use("/v1/admin", jwtHelper.verifyAdminToken, admin);
 
     app.listen(
         process.env.PORT,

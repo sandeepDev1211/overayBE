@@ -25,6 +25,10 @@ const productSchema = new Schema({
         type: Array.of(Types.ObjectId),
         require: true,
     },
+    is_deleted: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 export default model("product", productSchema);

@@ -14,6 +14,35 @@ class BusinessBase {
             .limit(limit)
             .exec();
     }
+
+    async saveOrUpdate({ data }) {
+        try {
+            const { _id, ...updateData } = data;
+            let result;
+            if (_id) {
+                result = await this.Schema.findByIdAndUpdate(_id, updateData, {
+                    new: true,
+                    upsert: true,
+                }).exec();
+            } else {
+                const newDocument = new this.Schema(data);
+                result = await newDocument.save();
+            }
+            return result;
+        } catch (error) {
+            console.error("Error saving or updating data in MongoDB:", error);
+            throw error;
+        }
+    }
+
+    async delete(id) {
+        try {
+            const result = await this.Schema.findByIdAndDelete(id).exec();
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
 }
 
 const classMap = {

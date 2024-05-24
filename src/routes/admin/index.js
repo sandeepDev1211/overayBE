@@ -32,4 +32,11 @@ app.post("/:businessObjectName/list", async (req, res) => {
     return res.json(data);
 });
 
+app.post("/:businessObjectName/save", async (req, res) => {
+    const { businessObject } = req;
+    const { data } = req.body;
+    const result = await businessObject.saveOrUpdate({ data });
+    return res.json(result);
+});
+
 export default app;

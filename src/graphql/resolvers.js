@@ -17,7 +17,6 @@ export const resolvers = {
                 pincode: args.address.pincode,
                 security_userId: contextValue.user._id,
             });
-            console.log(args.address.address_line_1);
         },
     },
 };

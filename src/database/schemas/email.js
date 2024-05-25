@@ -17,7 +17,7 @@ const emailSchema = new Schema({
         type: Number,
         default: 0,
     },
-    SentOn: {
+    sent_on: {
         type: Date,
     },
 });

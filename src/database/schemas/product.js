@@ -21,10 +21,13 @@ const productSchema = new Schema({
     parent_id: {
         type: Types.ObjectId,
     },
-    categories: {
-        type: Array.of(Types.ObjectId),
-        require: true,
-    },
+    categories: [
+        {
+            type: Types.ObjectId,
+            ref: "category",
+            required: true,
+        },
+    ],
     is_deleted: {
         type: Boolean,
         default: false,

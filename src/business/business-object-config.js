@@ -4,7 +4,12 @@ const config = {
     Product: {
         Schema: schemas.product,
         keyField: "code",
-        lookups: [],
+        populate: ["categories"],
+    },
+    Category: {
+        Schema: schemas.category,
+        keyField: "_id",
+        populate: ["parent_category"],
     },
 };
 

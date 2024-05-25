@@ -8,11 +8,21 @@ class BusinessBase {
     static businessObject = null;
 
     async list({ start = 0, limit = 50, sort = {}, filter = {} }) {
-        return this.Schema.find(filter)
+        let query = this.Schema.find(filter)
             .sort(sort)
             .skip(start)
-            .limit(limit)
-            .exec();
+            .limit(limit);
+        if (
+            this.populate &&
+            Array.isArray(this.populate) &&
+            this.populate.length > 0
+        ) {
+            this.populate.forEach((field) => {
+                query = query.populate(field);
+            });
+        }
+
+        return query.exec();
     }
 
     async saveOrUpdate({ data }) {

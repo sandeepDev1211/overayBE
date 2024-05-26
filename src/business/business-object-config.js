@@ -11,6 +11,16 @@ const config = {
         keyField: "_id",
         populate: ["parent_category"],
     },
+    Coupon: {
+        Schema: schemas.coupon,
+        keyField: "_id",
+        populate: ["applicable_products", "applicable_categories"],
+    },
+    Order: {
+        Schema: schemas.order,
+        keyField: "_id",
+        populate: ["products"],
+    },
 };
 
 export default config;

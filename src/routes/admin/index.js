@@ -39,4 +39,18 @@ app.post("/:businessObjectName/save", async (req, res) => {
     return res.json(result);
 });
 
+app.post("/:businessObjectName/delete", async (req, res) => {
+    const { businessObject } = req;
+    const { data } = req.body;
+    const result = await businessObject.delete(data._id);
+    return res.json(result);
+});
+
+app.get("/:businessObjectName/:id", async (req, res) => {
+    const { businessObject } = req;
+    const id = req.params.id;
+    const result = await businessObject.load(id);
+    return res.json(result);
+});
+
 export default app;

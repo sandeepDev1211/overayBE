@@ -47,10 +47,17 @@ class BusinessBase {
 
     async delete(id) {
         try {
-            const result = await this.Schema.findByIdAndDelete(id).exec();
-            return result;
+            return this.Schema.findByIdAndDelete(id).exec();
         } catch (err) {
-            throw err;
+            console.error(err);
+        }
+    }
+
+    async load(id) {
+        try {
+            return this.Schema.findOne(id).exec();
+        } catch (err) {
+            console.error(err);
         }
     }
 }

@@ -13,6 +13,7 @@
     "dependencies": {
         "@apollo/server": "^4.10.4",
         "bcryptjs": "^2.4.3",
+        "cors": "^2.8.5",
         "express": "^4.19.2",
         "file-stream-rotator": "^1.0.0",
         "fs-extra": "^11.2.0",

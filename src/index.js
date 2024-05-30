@@ -1,4 +1,5 @@
 import Express from "express";
+import cors from "cors";
 import version_1 from "./routes/index.js";
 import databaseOperations from "./database/databaseOperations.js";
 import { ApolloServer } from "@apollo/server";
@@ -14,7 +15,7 @@ import admin from "./routes/admin/index.js";
     databaseOperations.createConnection();
 
     const app = Express();
-
+    app.use(cors());
     const httpServer = http.createServer(app);
 
     const apolloServer = new ApolloServer({

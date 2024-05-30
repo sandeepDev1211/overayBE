@@ -28,6 +28,10 @@ const productSchema = new Schema({
             required: true,
         },
     ],
+    default_image: {
+        type: String,
+        required: true,
+    },
     is_deleted: {
         type: Boolean,
         default: false,

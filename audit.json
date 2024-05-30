@@ -1,0 +1,26 @@
+{
+    "keepSettings": {
+        "type": 1,
+        "amount": 10
+    },
+    "auditFilename": "audit.json",
+    "hashType": "md5",
+    "extension": ".log",
+    "files": [
+        {
+            "date": 1717090798351,
+            "name": "./logs/log-2024-05-30.0.log",
+            "hash": "51a85218305fe9a06285726afed535cf"
+        },
+        {
+            "date": 1717090798356,
+            "name": "./logs/error-2024-05-30.0.log",
+            "hash": "60bbdb9f79bdb7e4045a90c95456e6f6"
+        },
+        {
+            "date": 1717090798358,
+            "name": "./logs/slow-2024-05-30.0.log",
+            "hash": "ac627db6d492c4653cb1a6ce7198c2df"
+        }
+    ]
+}

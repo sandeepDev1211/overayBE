@@ -1,3 +1,5 @@
+import logger from "../utils/logger.js";
+
 const extendClass = function (baseClass, config) {
     const newClass = class extends baseClass {};
     Object.assign(newClass.prototype, config);
@@ -15,21 +17,26 @@ class BusinessBase {
      * for population, those fields will also be populated in the query result before it is executed.
      */
     async list({ start = 0, limit = 50, sort = {}, filter = {} }) {
-        let query = this.Schema.find(filter)
-            .sort(sort)
-            .skip(start)
-            .limit(limit);
-        if (
-            this.populate &&
-            Array.isArray(this.populate) &&
-            this.populate.length > 0
-        ) {
-            this.populate.forEach((field) => {
-                query = query.populate(field);
-            });
+        try {
+            let query = this.Schema.find(filter)
+                .sort(sort)
+                .skip(start)
+                .limit(limit);
+            if (
+                this.populate &&
+                Array.isArray(this.populate) &&
+                this.populate.length > 0
+            ) {
+                this.populate.forEach((field) => {
+                    query = query.populate(field);
+                });
+            }
+            const result = await query.exec();
+            return result;
+        } catch (error) {
+            logger.error(error);
+            return { error: error.toString() };
         }
-
-        return query.exec();
     }
 
     /**
@@ -54,8 +61,8 @@ class BusinessBase {
             }
             return result;
         } catch (error) {
-            console.error("Error saving or updating data in MongoDB:", error);
-            throw error;
+            logger.error(error);
+            return { error: error.toString() };
         }
     }
 
@@ -71,8 +78,9 @@ class BusinessBase {
     async delete(id) {
         try {
             return this.Schema.findByIdAndDelete(id).exec();
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            logger.error(error);
+            return { error: error.toString() };
         }
     }
 
@@ -86,13 +94,26 @@ class BusinessBase {
      */
     async load(id) {
         try {
-            return this.Schema.findOne(id).exec();
-        } catch (err) {
-            console.error(err);
+            let query = this.Schema.findById(id);
+            if (
+                this.populate &&
+                Array.isArray(this.populate) &&
+                this.populate.length > 0
+            ) {
+                this.populate.forEach((field) => {
+                    query = query.populate(field);
+                });
+            }
+            return query.exec();
+        } catch (error) {
+            logger.error(error);
+            return { error: error.toString() };
         }
     }
 }
 
+/* The `classMap` object is a utility object that helps manage and store classes in a mapping
+structure.*/
 const classMap = {
     map: new Map(),
     baseTypes: {

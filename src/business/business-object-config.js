@@ -1,11 +1,9 @@
 import schemas from "../database/schemas/index.js";
+import ProductImage from "./overrides/product-image.js";
+import Product from "./overrides/product.js";
 
 const config = {
-    Product: {
-        Schema: schemas.product,
-        keyField: "code",
-        populate: ["categories"],
-    },
+    Product: Product,
     Category: {
         Schema: schemas.category,
         keyField: "_id",
@@ -21,6 +19,7 @@ const config = {
         keyField: "_id",
         populate: ["products"],
     },
+    ProductImage: ProductImage,
 };
 
 export default config;

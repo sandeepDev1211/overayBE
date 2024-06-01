@@ -46,8 +46,12 @@ class BusinessBase {
      * in MongoDB or saving a new document. The result will be the updated document if an existing
      * document was updated, or the newly saved document if a new document was created.
      */
-    async saveOrUpdate({ data }) {
+    async saveOrUpdate({ data, files = null }) {
         try {
+            if (files.length > 0)
+                throw new Error(
+                    "This request does not support files in request"
+                );
             const { _id, ...updateData } = data;
             let result;
             if (_id) {

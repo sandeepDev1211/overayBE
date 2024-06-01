@@ -1,6 +1,7 @@
 import { Router } from "express";
 import businessBaseConfigs from "../../business/business-object-config.js";
 import { classMap } from "../../business/business-base.js";
+import utils from "../../utils/index.js";
 const app = Router();
 
 /* This code snippet is iterating over each key in the `businessBaseConfigs` object using a `for...in`
@@ -41,12 +42,17 @@ app.post("/:businessObjectName/list", async (req, res) => {
     return res.json(data);
 });
 
-app.post("/:businessObjectName/save", async (req, res) => {
-    const { businessObject } = req;
-    const { data } = req.body;
-    const result = await businessObject.saveOrUpdate({ data });
-    return res.json(result);
-});
+app.post(
+    "/:businessObjectName/save",
+    utils.uploadFile.any(),
+    async (req, res) => {
+        const { businessObject } = req;
+        const { data } = req.body;
+        const files = req.files;
+        const result = await businessObject.saveOrUpdate({ data, files });
+        return res.json(result);
+    }
+);
 
 app.post("/:businessObjectName/delete", async (req, res) => {
     const { businessObject } = req;

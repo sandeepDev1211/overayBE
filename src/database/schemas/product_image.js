@@ -1,17 +1,14 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 const productImageSchema = new Schema({
     product_id: {
-        type: String,
+        type: Types.ObjectId,
         required: true,
     },
-    description: {
-        type: String,
-    },
-    imageName: {
+    image_name: {
         type: String,
         required: true,
     },
 });
 
-export default model("product_image", productImageSchema);
+export default model("product_img", productImageSchema);

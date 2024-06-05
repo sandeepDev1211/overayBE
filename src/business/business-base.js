@@ -46,7 +46,7 @@ class BusinessBase {
      * in MongoDB or saving a new document. The result will be the updated document if an existing
      * document was updated, or the newly saved document if a new document was created.
      */
-    async saveOrUpdate({ data, files = null }) {
+    async saveOrUpdate({ data, files = [] }) {
         try {
             if (files.length > 0)
                 throw new Error(

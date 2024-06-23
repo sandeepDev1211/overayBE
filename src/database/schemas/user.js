@@ -7,6 +7,9 @@ const userSchema = new Schema({
     },
     dob: {
         type: Date,
+        required: true,
+        get: (value) => value.toISOString().split("T")[0], // Getter to ensure date-only format
+        set: (value) => new Date(value),
     },
     address: {
         type: String,

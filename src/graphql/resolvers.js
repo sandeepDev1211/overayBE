@@ -1,11 +1,45 @@
 import schemas from "../database/schemas/index.js";
+import mongoose from "mongoose";
 
 export const resolvers = {
     Query: {
-        async addresses(parent, args, contextValue) {
+        addresses: async (parent, args, contextValue) => {
             return await schemas.address.find({
                 security_userId: contextValue.user._id,
             });
+        },
+        products: async (parent, args) => {
+            const filter = {};
+
+            if (args.filter) {
+                const { _id, categories, minPrice, maxPrice } = args.filter;
+
+                if (_id) {
+                    filter._id = new mongoose.Types.ObjectId(_id);
+                }
+
+                if (categories && categories.length > 0) {
+                    filter.categories = {
+                        $in: categories.map(
+                            (id) => new mongoose.Types.ObjectId(id)
+                        ),
+                    };
+                }
+
+                if (minPrice !== undefined || maxPrice !== undefined) {
+                    filter.price = {};
+
+                    if (minPrice !== undefined) {
+                        filter.price.$gte = minPrice;
+                    }
+
+                    if (maxPrice !== undefined) {
+                        filter.price.$lte = maxPrice;
+                    }
+                }
+            }
+
+            return await schemas.product.find(filter).populate("categories");
         },
     },
     Mutation: {

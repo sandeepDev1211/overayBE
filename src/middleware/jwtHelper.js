@@ -1,3 +1,4 @@
+import { ApolloServerErrorCode } from "@apollo/server/errors";
 import jwt from "jsonwebtoken";
 
 const createToken = (user) => {
@@ -24,6 +25,22 @@ const verifyToken = (req, res, next) => {
     }
 };
 
+const verifyGraphqlToken = (req, res) => {
+    if (!req.headers.authorization) {
+        throw new ApolloServerErrorCode(401);
+    }
+    const token = req.headers["authorization"].split(" ")[1];
+    if (!token) {
+        return res.status(401).send("Access denied. No token provided.");
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        return decoded.user;
+    } catch (err) {
+        res.status(400).send("Invalid token.");
+    }
+};
+
 const verifyAdminToken = (req, res, next) => {
     if (!req.headers.authorization) {
         return res.status(401).send("Unauthorized request");
@@ -42,4 +59,9 @@ const verifyAdminToken = (req, res, next) => {
     }
 };
 
-export default { createToken, verifyToken, verifyAdminToken };
+export default {
+    createToken,
+    verifyToken,
+    verifyAdminToken,
+    verifyGraphqlToken,
+};

@@ -5,7 +5,7 @@ const addressSchema = new Schema({
     address_line_2: String,
     landmark: String,
     pincode: Number,
-    security_userId: {
+    user_id: {
         type: Types.ObjectId,
         required: true,
     },

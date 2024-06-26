@@ -9,6 +9,7 @@ export const typeDefs = `#graphql
     type Product {
         _id: ID!,
         code: String!,
+        price: Int!,
         discount: Int!,
         parent_id: String,
         categories: [Category!]!,
@@ -18,12 +19,19 @@ export const typeDefs = `#graphql
         _id: ID!,
         name: String
     }
+    type Cart {
+        _id: ID!,
+        products: [Product]
+    }
     type Query {
         addresses: [Address]
         products(filter: ProductFilter): [Product]
+        cart: [Cart]
     }
     type Mutation {
         addAddress(address: AddAddressInput!): Address
+        addProductToCart(product_id: String!): Cart
+        removeProductFromCar(product_id: String!): Cart
     }
     input AddAddressInput {
         address_line_1: String!,

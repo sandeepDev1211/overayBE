@@ -5,7 +5,7 @@ export const resolvers = {
     Query: {
         addresses: async (parent, args, contextValue) => {
             return await schemas.address.find({
-                security_userId: contextValue.user._id,
+                user_Id: contextValue.user._id,
             });
         },
         products: async (parent, args) => {
@@ -41,16 +41,49 @@ export const resolvers = {
 
             return await schemas.product.find(filter).populate("categories");
         },
+        cart: async (parent, args, contextValue) => {
+            return await schemas.cart.findOne({
+                user_id: contextValue.user._id,
+            });
+        },
     },
     Mutation: {
-        addAddress(parent, args, contextValue) {
+        addAddress: (parent, args, contextValue) => {
             return schemas.address.create({
                 address_line_1: args.address.address_line_1,
                 address_line_2: args.address.address_line_2,
                 landmark: args.address.landmark,
                 pincode: args.address.pincode,
-                security_userId: contextValue.user._id,
+                user_id: contextValue.user._id,
             });
+        },
+        addProductToCart: async (parent, args, contextValue) => {
+            return schemas.cart
+                .findOne({ user_id: contextValue.user._id })
+                .then((cart) => {
+                    if (cart) {
+                        // Cart found, update it
+                        return schemas.cart.findOneAndUpdate(
+                            { user_id: contextValue.user._id },
+                            { $push: { products: args.product_id } },
+                            { new: true, useFindAndModify: false }
+                        );
+                    } else {
+                        // Cart not found, create a new one
+                        const newCart = new schemas.cart({
+                            user_id: contextValue.user._id,
+                            products: [args.product_id],
+                        });
+                        return newCart.save();
+                    }
+                });
+        },
+        removeProductFromCart: async (parent, args, contextValue) => {
+            return schemas.cart.findOneAndUpdate(
+                { user_id: contextValue.user._id },
+                { $pull: { products: productIdToRemove } },
+                { new: true, useFindAndModify: false }
+            );
         },
     },
 };

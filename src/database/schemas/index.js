@@ -6,6 +6,7 @@ import category from "./category.js";
 import coupon from "./coupon.js";
 import order from "./order.js";
 import product_image from "./product_image.js";
+import cart from "./cart.js";
 
 export default {
     security_user,
@@ -16,4 +17,5 @@ export default {
     coupon,
     order,
     product_image,
+    cart,
 };

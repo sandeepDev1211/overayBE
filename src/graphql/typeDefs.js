@@ -23,6 +23,10 @@ export const typeDefs = `#graphql
         _id: ID!,
         products: [Product]
     }
+    type Wishlist {
+        _id: ID!,
+        products: [Product]
+    }
     type Query {
         addresses: [Address]
         products(filter: ProductFilter): [Product]
@@ -32,6 +36,8 @@ export const typeDefs = `#graphql
         addAddress(address: AddAddressInput!): Address
         addProductToCart(product_id: String!): Cart
         removeProductFromCar(product_id: String!): Cart
+        addProductToWishlist(product_id: String!): Wishlist
+        removeProductFromWishlist(product_id: String!): Wishlist
     }
     input AddAddressInput {
         address_line_1: String!,

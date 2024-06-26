@@ -81,7 +81,35 @@ export const resolvers = {
         removeProductFromCart: async (parent, args, contextValue) => {
             return schemas.cart.findOneAndUpdate(
                 { user_id: contextValue.user._id },
-                { $pull: { products: productIdToRemove } },
+                { $pull: { products: args.product_id } },
+                { new: true, useFindAndModify: false }
+            );
+        },
+        addProductToWishlist: async (parent, args, contextValue) => {
+            return schemas.wishlist
+                .findOne({ user_id: contextValue.user._id })
+                .then((cart) => {
+                    if (cart) {
+                        // Cart found, update it
+                        return schemas.wishlist.findOneAndUpdate(
+                            { user_id: contextValue.user._id },
+                            { $push: { products: args.product_id } },
+                            { new: true, useFindAndModify: false }
+                        );
+                    } else {
+                        // Cart not found, create a new one
+                        const newCart = new schemas.wishlist({
+                            user_id: contextValue.user._id,
+                            products: [args.product_id],
+                        });
+                        return newCart.save();
+                    }
+                });
+        },
+        removeProductFromWishlist: async (parent, args, contextValue) => {
+            return schemas.wishlist.findOneAndUpdate(
+                { user_id: contextValue.user._id },
+                { $pull: { products: args.product_id } },
                 { new: true, useFindAndModify: false }
             );
         },

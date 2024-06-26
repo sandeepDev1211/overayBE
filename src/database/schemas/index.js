@@ -7,6 +7,7 @@ import coupon from "./coupon.js";
 import order from "./order.js";
 import product_image from "./product_image.js";
 import cart from "./cart.js";
+import wishlist from "./wishlist.js";
 
 export default {
     security_user,
@@ -18,4 +19,5 @@ export default {
     order,
     product_image,
     cart,
+    wishlist,
 };

@@ -7,7 +7,6 @@ const config = {
     Category: {
         Schema: schemas.category,
         keyField: "_id",
-        populate: ["parent_category"],
     },
     Coupon: {
         Schema: schemas.coupon,

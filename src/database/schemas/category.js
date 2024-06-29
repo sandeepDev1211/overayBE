@@ -12,7 +12,6 @@ const categorySchema = new Schema({
     },
     parent_category: {
         type: Types.ObjectId,
-        ref: "Category",
         required: false,
     },
     is_deleted: {

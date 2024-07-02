@@ -17,7 +17,9 @@ export const typeDefs = `#graphql
     }
     type Category {
         _id: ID!,
-        name: String
+        name: String,
+        description: String,
+        parent_category: String
     }
     type Cart {
         _id: ID!,

@@ -31,11 +31,12 @@ export const typeDefs = `#graphql
         addresses: [Address]
         products(filter: ProductFilter): [Product]
         cart: [Cart]
+        wishlist: [Wishlist]
     }
     type Mutation {
         addAddress(address: AddAddressInput!): Address
         addProductToCart(product_id: String!): Cart
-        removeProductFromCar(product_id: String!): Cart
+        removeProductFromCart(product_id: String!): Cart
         addProductToWishlist(product_id: String!): Wishlist
         removeProductFromWishlist(product_id: String!): Wishlist
     }

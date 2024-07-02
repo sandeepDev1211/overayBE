@@ -46,6 +46,11 @@ export const resolvers = {
                 user_id: contextValue.user._id,
             });
         },
+        wishlist: async (parent, args, contextValue) => {
+            return await schemas.wishlist.findOne({
+                user_id: contextValue.user._id,
+            });
+        },
     },
     Mutation: {
         addAddress: (parent, args, contextValue) => {

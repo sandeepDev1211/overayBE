@@ -1,3 +1,4 @@
+import category from "../database/schemas/category.js";
 import schemas from "../database/schemas/index.js";
 import mongoose from "mongoose";
 
@@ -50,6 +51,9 @@ export const resolvers = {
             return await schemas.wishlist.findOne({
                 user_id: contextValue.user._id,
             });
+        },
+        category: async () => {
+            return await schemas.category.find().exec();
         },
     },
     Mutation: {

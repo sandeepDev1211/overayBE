@@ -28,6 +28,12 @@ const productSchema = new Schema({
             required: true,
         },
     ],
+    product_images: [
+        {
+            type: Types.ObjectId,
+            ref: "product_image",
+        },
+    ],
     default_image: {
         type: String,
         required: true,

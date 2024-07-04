@@ -29,6 +29,12 @@ export const typeDefs = `#graphql
         _id: ID!,
         products: [Product]
     }
+    type Banner {
+        _id: ID!,
+        name: String,
+        banner_image: String,
+        banner_type: String
+    }
     type Query {
         addresses: [Address]
         products(filter: ProductFilter): [Product]
@@ -51,6 +57,7 @@ export const typeDefs = `#graphql
     }
     input ProductFilter {
         _id: ID
+        name: String
         categories: [ID!]
         minPrice: Float
         maxPrice: Float

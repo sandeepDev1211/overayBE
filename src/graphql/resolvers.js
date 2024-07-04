@@ -13,10 +13,15 @@ export const resolvers = {
             const filter = {};
 
             if (args.filter) {
-                const { _id, categories, minPrice, maxPrice } = args.filter;
+                const { _id, categories, minPrice, maxPrice, name } =
+                    args.filter;
 
                 if (_id) {
                     filter._id = new mongoose.Types.ObjectId(_id);
+                }
+
+                if (name) {
+                    filter.name = { $regex: name, $options: "i" };
                 }
 
                 if (categories && categories.length > 0) {
@@ -40,7 +45,10 @@ export const resolvers = {
                 }
             }
 
-            return await schemas.product.find(filter).populate("categories");
+            return await schemas.product
+                .find(filter)
+                .populate("categories")
+                .populate("product_images");
         },
         cart: async (parent, args, contextValue) => {
             return await schemas.cart.findOne({

@@ -11,10 +11,20 @@ export const resolvers = {
         },
         products: async (parent, args) => {
             const filter = {};
-
+            const limit = 10;
+            const start = 0;
+            const sort = {};
             if (args.filter) {
-                const { _id, categories, minPrice, maxPrice, name } =
-                    args.filter;
+                const {
+                    _id,
+                    categories,
+                    minPrice,
+                    maxPrice,
+                    name,
+                    limit: lim,
+                    start: strt,
+                    sort: sortOption,
+                } = args.filter;
 
                 if (_id) {
                     filter._id = new mongoose.Types.ObjectId(_id);
@@ -43,12 +53,28 @@ export const resolvers = {
                         filter.price.$lte = maxPrice;
                     }
                 }
-            }
 
+                if (sortOption) {
+                    sort[sortOption.field] =
+                        sortOption.order === "asc" ? 1 : -1;
+                }
+
+                if (lim !== undefined) {
+                    limit = lim;
+                }
+
+                if (strt !== undefined) {
+                    start = strt;
+                }
+            }
             return await schemas.product
                 .find(filter)
+                .limit(limit)
+                .skip(start)
+                .sort(sort)
                 .populate("categories")
-                .populate("product_images");
+                .populate("product_images")
+                .exec();
         },
         cart: async (parent, args, contextValue) => {
             return await schemas.cart.findOne({

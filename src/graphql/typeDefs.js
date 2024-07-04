@@ -55,11 +55,18 @@ export const typeDefs = `#graphql
         landmark: String,
         pincode: Int!
     }
+    input SortInput {
+        field: String!,
+        order: String! 
+    }
     input ProductFilter {
-        _id: ID
-        name: String
-        categories: [ID!]
-        minPrice: Float
-        maxPrice: Float
-  }
+        _id: ID,
+        name: String,
+        categories: [ID!],
+        minPrice: Float,
+        maxPrice: Float,
+        sort: SortInput,
+        start: Int,
+        limit: Int
+    }
 `;

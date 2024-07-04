@@ -6,6 +6,11 @@ export const typeDefs = `#graphql
         landmark: String,
         pincode: Int!
     }
+    type ProductImage {
+        _id: ID!,
+        product_id: String,
+        image_name: String
+    }
     type Product {
         _id: ID!,
         code: String!,
@@ -13,7 +18,8 @@ export const typeDefs = `#graphql
         discount: Int!,
         parent_id: String,
         categories: [Category!]!,
-        default_image: String
+        default_image: String,
+        product_images: [ProductImage]
     }
     type Category {
         _id: ID!,

@@ -3,20 +3,20 @@ import { Schema, Types, model } from "mongoose";
 const productSchema = new Schema({
     name: {
         type: String,
-        require: true,
+        required: true,
     },
     code: {
         type: String,
-        require: true,
+        required: true,
         unique: true,
     },
     price: {
         type: Number,
-        require: true,
+        required: true,
     },
     discount: {
         type: Number,
-        require: true,
+        required: true,
     },
     parent_id: {
         type: Types.ObjectId,

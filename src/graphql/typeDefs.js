@@ -47,6 +47,7 @@ export const typeDefs = `#graphql
         cart: [Cart]
         wishlist: [Wishlist]
         category: [Category]
+        banner: [Banner]
     }
     type Mutation {
         addAddress(address: AddAddressInput!): Address

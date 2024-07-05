@@ -1,4 +1,5 @@
 import schemas from "../database/schemas/index.js";
+import Banner from "./overrides/banner.js";
 import ProductImage from "./overrides/product-image.js";
 import Product from "./overrides/product.js";
 
@@ -19,6 +20,7 @@ const config = {
         populate: ["products"],
     },
     ProductImage: ProductImage,
+    Banner: Banner,
 };
 
 export default config;

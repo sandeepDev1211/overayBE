@@ -1,3 +1,4 @@
+import banner from "../database/schemas/banner.js";
 import category from "../database/schemas/category.js";
 import schemas from "../database/schemas/index.js";
 import mongoose from "mongoose";
@@ -88,6 +89,9 @@ export const resolvers = {
         },
         category: async () => {
             return await schemas.category.find().exec();
+        },
+        banner: async () => {
+            return await schemas.banner.find().exec();
         },
     },
     Mutation: {

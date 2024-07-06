@@ -12,7 +12,7 @@ const config = {
     Coupon: {
         Schema: schemas.coupon,
         keyField: "_id",
-        //populate: ["applicable_products", "applicable_categories"],
+        populate: ["applicable_products", "applicable_categories"],
     },
     Order: {
         Schema: schemas.order,

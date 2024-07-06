@@ -38,6 +38,10 @@ const productSchema = new Schema({
         type: String,
         required: true,
     },
+    quantity: {
+        type: Number,
+        required: true,
+    },
     is_deleted: {
         type: Boolean,
         default: false,

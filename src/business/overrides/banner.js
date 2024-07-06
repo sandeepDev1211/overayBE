@@ -4,10 +4,10 @@ import schemas from "../../database/schemas/index.js";
 class Banner extends BusinessBase {
     Schema = schemas.banner;
     async saveOrUpdate({ data, files = [] }) {
-        if (files.length === 0) {
-            throw new Error("File is required for saving banner");
-        }
         try {
+            if (files.length === 0) {
+                throw new Error("File is required for saving banner");
+            }
             // Convert data to JSON once outside the loop
             const parsedData = JSON.parse(data);
 

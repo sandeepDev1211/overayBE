@@ -4,10 +4,10 @@ import schemas from "../../database/schemas/index.js";
 class ProductImage extends BusinessBase {
     Schema = schemas.product_image;
     async saveOrUpdate({ data, files = [] }) {
-        if (files.length === 0) {
-            throw new Error("File is required for saving product image");
-        }
         try {
+            if (files.length === 0) {
+                throw new Error("File is required for saving product image");
+            }
             // Convert data to JSON once outside the loop
             const parsedData = JSON.parse(data);
 

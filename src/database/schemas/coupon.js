@@ -30,14 +30,14 @@ const couponSchema = new Schema({
     applicable_products: [
         {
             type: Types.ObjectId,
-            ref: "Product",
+            ref: "product",
             required: false,
         },
     ],
     applicable_categories: [
         {
             type: Types.ObjectId,
-            ref: "Category",
+            ref: "category",
             required: false,
         },
     ],

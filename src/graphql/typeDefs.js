@@ -44,8 +44,8 @@ export const typeDefs = `#graphql
     type Query {
         addresses: [Address]
         products(filter: ProductFilter): [Product]
-        cart: [Cart]
-        wishlist: [Wishlist]
+        cart: Cart
+        wishlist: Wishlist
         category: [Category]
         banner: [Banner]
     }

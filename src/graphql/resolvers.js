@@ -74,13 +74,22 @@ export const resolvers = {
                 .skip(start)
                 .sort(sort)
                 .populate("categories")
-                .populate("product_images")
+                //.populate("product_image")
                 .exec();
         },
         cart: async (parent, args, contextValue) => {
-            return await schemas.cart.findOne({
-                user_id: contextValue.user._id,
-            });
+            const data = await schemas.cart
+                .findOne({
+                    user_id: contextValue.user._id,
+                })
+                .populate({
+                    path: "products",
+                    populate: {
+                        path: "categories",
+                    },
+                })
+                .exec();
+            return data;
         },
         wishlist: async (parent, args, contextValue) => {
             return await schemas.wishlist.findOne({

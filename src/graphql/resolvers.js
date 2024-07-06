@@ -74,7 +74,7 @@ export const resolvers = {
                 .skip(start)
                 .sort(sort)
                 .populate("categories")
-                //.populate("product_image")
+                .populate("product_images")
                 .exec();
         },
         cart: async (parent, args, contextValue) => {

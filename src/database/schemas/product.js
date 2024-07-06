@@ -28,7 +28,7 @@ const productSchema = new Schema({
             required: true,
         },
     ],
-    product_image: [
+    product_images: [
         {
             type: Types.ObjectId,
             ref: "product_img",

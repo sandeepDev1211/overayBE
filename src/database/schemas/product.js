@@ -28,10 +28,10 @@ const productSchema = new Schema({
             required: true,
         },
     ],
-    product_images: [
+    product_image: [
         {
             type: Types.ObjectId,
-            ref: "product_image",
+            ref: "product_img",
         },
     ],
     default_image: {

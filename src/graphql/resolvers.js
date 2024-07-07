@@ -84,9 +84,10 @@ export const resolvers = {
                 })
                 .populate({
                     path: "products",
-                    populate: {
-                        path: "categories",
-                    },
+                    populate: [
+                        { path: "categories" },
+                        { path: "product_images" },
+                    ],
                 })
                 .exec();
             return data;

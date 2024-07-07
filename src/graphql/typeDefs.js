@@ -31,9 +31,17 @@ export const typeDefs = `#graphql
         _id: ID!,
         products: [Product]
     }
+    type AddedCart {
+        _id: ID!,
+        products: [String]
+    }
     type Wishlist {
         _id: ID!,
         products: [Product]
+    }
+    type AddedWishlist {
+        _id: ID!,
+        products: [String]
     }
     type Banner {
         _id: ID!,
@@ -51,10 +59,10 @@ export const typeDefs = `#graphql
     }
     type Mutation {
         addAddress(address: AddAddressInput!): Address
-        addProductToCart(product_id: String!): Cart
-        removeProductFromCart(product_id: String!): Cart
-        addProductToWishlist(product_id: String!): Wishlist
-        removeProductFromWishlist(product_id: String!): Wishlist
+        addProductToCart(product_id: String!): AddedCart
+        removeProductFromCart(product_id: String!): AddedCart
+        addProductToWishlist(product_id: String!): AddedWishlist
+        removeProductFromWishlist(product_id: String!): AddedWishlist
     }
     input AddAddressInput {
         address_line_1: String!,

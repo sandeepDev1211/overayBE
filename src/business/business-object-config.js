@@ -1,14 +1,12 @@
 import schemas from "../database/schemas/index.js";
 import Banner from "./overrides/banner.js";
+import Category from "./overrides/category.js";
 import ProductImage from "./overrides/product-image.js";
 import Product from "./overrides/product.js";
 
 const config = {
     Product: Product,
-    Category: {
-        Schema: schemas.category,
-        keyField: "_id",
-    },
+    Category: Category,
     Coupon: {
         Schema: schemas.coupon,
         keyField: "_id",

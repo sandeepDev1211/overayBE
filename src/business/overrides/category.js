@@ -31,4 +31,4 @@ class Category extends BusinessBase {
     }
 }
 
-export default Product;
+export default Category;

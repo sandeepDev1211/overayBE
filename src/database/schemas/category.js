@@ -14,6 +14,10 @@ const categorySchema = new Schema({
         type: Types.ObjectId,
         required: false,
     },
+    image: {
+        type: String,
+        required: false,
+    },
     is_deleted: {
         type: Boolean,
         default: false,

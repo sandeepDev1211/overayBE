@@ -25,7 +25,8 @@ export const typeDefs = `#graphql
         _id: ID!,
         name: String,
         description: String,
-        parent_category: String
+        parent_category: String,
+        image: String
     }
     type Cart {
         _id: ID!,

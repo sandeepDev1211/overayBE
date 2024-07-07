@@ -1,5 +1,3 @@
-import banner from "../database/schemas/banner.js";
-import category from "../database/schemas/category.js";
 import schemas from "../database/schemas/index.js";
 import mongoose from "mongoose";
 

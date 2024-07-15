@@ -1,7 +1,8 @@
 import { Router } from "express";
 import path from "path";
 import auth from "./auth.js";
-import order from "./order.js";
+import checkout from "./checkout.js";
+import jwtHelper from "../middleware/jwtHelper.js";
 const app = Router();
 
 app.use("/auth", auth);
@@ -13,6 +14,6 @@ app.get("/file/:filename", (req, res) => {
     );
     res.sendFile(filePath);
 });
-app.use("/order", order);
+app.use("/checkout", jwtHelper.verifyToken, checkout);
 
 export default app;

@@ -27,6 +27,11 @@ const orderSchema = new Schema({
                 required: false,
                 default: 0,
             },
+            subtotal: {
+                type: Number,
+                required: false,
+                default: 0,
+            },
         },
     ],
     total_amount: {
@@ -45,6 +50,9 @@ const orderSchema = new Schema({
     updated_at: {
         type: Date,
         default: Date.now,
+    },
+    razorpay_orderId: {
+        type: String,
     },
 });
 

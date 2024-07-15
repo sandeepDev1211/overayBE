@@ -42,6 +42,10 @@ const productSchema = new Schema({
         type: Number,
         required: true,
     },
+    wieght: {
+        type: Number,
+        required: true,
+    },
     is_deleted: {
         type: Boolean,
         default: false,

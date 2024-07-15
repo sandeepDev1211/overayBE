@@ -83,6 +83,7 @@ export const typeDefs = `#graphql
         maxPrice: Float,
         sort: SortInput,
         start: Int,
-        limit: Int
+        limit: Int,
+        parent_id: String
     }
 `;

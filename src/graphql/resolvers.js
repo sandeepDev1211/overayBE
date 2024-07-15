@@ -19,6 +19,7 @@ export const resolvers = {
                     categories,
                     minPrice,
                     maxPrice,
+                    parent_id,
                     name,
                     limit: lim,
                     start: strt,
@@ -31,6 +32,10 @@ export const resolvers = {
 
                 if (name) {
                     filter.name = { $regex: name, $options: "i" };
+                }
+
+                if (parent_id) {
+                    filter.parent_id = parent_id;
                 }
 
                 if (categories && categories.length > 0) {

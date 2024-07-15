@@ -43,9 +43,22 @@ const orderSchema = new Schema({
         enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
         default: "Pending",
     },
+    delivery_charges: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
     created_at: {
         type: Date,
         default: Date.now,
+    },
+    sgst: {
+        type: Number,
+        default: 0,
+    },
+    cgst: {
+        type: Number,
+        default: 0,
     },
     updated_at: {
         type: Date,

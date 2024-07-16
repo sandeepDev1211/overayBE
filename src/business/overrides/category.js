@@ -7,11 +7,11 @@ class Category extends BusinessBase {
     async saveOrUpdate({ data, files = [] }) {
         try {
             const file = files[0];
-            const parsedData = JSON.parse(data);
             if (file) {
-                parsedData.image = file.filename;
+                data.image = file.filename;
             }
-            const { _id, ...updateData } = parsedData;
+            const { _id, ...updateData } =
+                typeof data === "object" ? data : JSON.parse(data);
 
             let result;
             if (_id) {
@@ -20,7 +20,7 @@ class Category extends BusinessBase {
                     upsert: true,
                 }).exec();
             } else {
-                const newDocument = new this.Schema(parsedData);
+                const newDocument = new this.Schema(data);
                 result = await newDocument.save();
             }
             return result;

@@ -34,8 +34,8 @@ export const resolvers = {
                     filter.name = { $regex: name, $options: "i" };
                 }
 
-                if (parent_id) {
-                    filter.parent_id = parent_id;
+                if (code) {
+                    filter.code = code;
                 }
 
                 if (categories && categories.length > 0) {

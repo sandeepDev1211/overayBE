@@ -1,15 +1,16 @@
 import { Router } from "express";
 import schemas from "../database/schemas/index.js";
 import Razorpay from "razorpay";
+import shiprocket from "../utils/shiprocket.js";
 const app = Router();
 
 const razorpay = new Razorpay({
-    key_id: "rzp_test_QmOwVGk7MJZGwE",
-    key_secret: "VFnMKaONDv2Rh5NhoF77HDav",
+    key_id: process.env.RAZOR_PAY_KEY_ID,
+    key_secret: process.env.RAZOR_PAY_KEY_SECRET,
 });
 app.post("/initiate", async (req, res) => {
     const { _id: userId } = req.user;
-    const { products } = req.body;
+    const { products, delivery_pincode } = req.body;
     if (!products) return res.sendStatus(400);
     const productsIds = products.map((product) => product._id);
     const productDetails = await schemas.product.find({
@@ -17,6 +18,7 @@ app.post("/initiate", async (req, res) => {
     });
 
     let totalAmount = 0;
+    let totalWeight = 0;
     let orderDetails = [];
 
     for (const product of products) {
@@ -31,6 +33,7 @@ app.post("/initiate", async (req, res) => {
 
         totalAmount +=
             (productDetail.price - productDetail.discount) * product.quantity;
+        totalWeight += productDetail.wieght * product.quantity;
         orderDetails.push({
             product_id: productDetail._id,
             price: productDetail.price,
@@ -47,12 +50,17 @@ app.post("/initiate", async (req, res) => {
         receipt: "recipt#1",
         partial_payment: false,
     });
+    const delivery_charges = await shiprocket.calculateShippingRate(
+        delivery_pincode,
+        totalWeight
+    );
     const order = new schemas.order({
         user_id: userId,
         products: orderDetails,
         total_amount: totalAmount,
         status: "Pending",
         razorpay_orderId: razorpayOrder.id,
+        delivery_charges,
     });
     res.send(await order.save());
 });

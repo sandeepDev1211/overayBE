@@ -8,7 +8,8 @@ class Product extends BusinessBase {
     async saveOrUpdate({ data, files = [] }) {
         try {
             const file = files[0];
-            const parsedData = JSON.parse(data);
+            const parsedData =
+                typeof data === "object" ? data : JSON.parse(data);
             if (file) {
                 parsedData.default_image = file.filename;
             }

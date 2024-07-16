@@ -84,6 +84,6 @@ export const typeDefs = `#graphql
         sort: SortInput,
         start: Int,
         limit: Int,
-        parent_id: String
+        code: String
     }
 `;

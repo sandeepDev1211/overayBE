@@ -10,6 +10,7 @@ import { typeDefs } from "./graphql/typeDefs.js";
 import { resolvers } from "./graphql/resolvers.js";
 import jwtHelper from "./middleware/jwtHelper.js";
 import admin from "./routes/admin/index.js";
+import shiprocket from "./utils/shiprocket.js";
 
 (async () => {
     databaseOperations.createConnection();
@@ -47,7 +48,7 @@ import admin from "./routes/admin/index.js";
         })
     );
     app.use("/v1/admin", jwtHelper.verifyAdminToken, admin);
-
+    shiprocket.initialize();
     app.listen(
         process.env.PORT,
         console.log(`Listening to port ${process.env.PORT}`)

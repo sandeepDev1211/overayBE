@@ -1,10 +1,26 @@
 import { Schema, model, Types } from "mongoose";
 
 const addressSchema = new Schema({
-    address_line_1: String,
-    address_line_2: String,
-    landmark: String,
-    pincode: Number,
+    name: {
+        type: String,
+        required: true,
+    },
+    address_line_1: {
+        type: String,
+        required: true,
+    },
+    address_line_2: {
+        type: String,
+        required: true,
+    },
+    landmark: {
+        type: String,
+        required: true,
+    },
+    pincode: {
+        type: Number,
+        required: true,
+    },
     user_id: {
         type: Types.ObjectId,
         required: true,

@@ -43,6 +43,11 @@ const orderSchema = new Schema({
         enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
         default: "Pending",
     },
+    address: {
+        type: Types.ObjectId,
+        ref: "address",
+        required: true,
+    },
     delivery_charges: {
         type: Number,
         required: true,

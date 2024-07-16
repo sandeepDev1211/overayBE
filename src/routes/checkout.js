@@ -10,7 +10,7 @@ const razorpay = new Razorpay({
 });
 app.post("/initiate", async (req, res) => {
     const { _id: userId } = req.user;
-    const { products, delivery_pincode } = req.body;
+    const { products, address_id } = req.body;
     if (!products) return res.sendStatus(400);
     const productsIds = products.map((product) => product._id);
     const productDetails = await schemas.product.find({
@@ -50,6 +50,8 @@ app.post("/initiate", async (req, res) => {
         receipt: "recipt#1",
         partial_payment: false,
     });
+    const address = await schemas.address.findById(address_id);
+    const delivery_pincode = address.pincode;
     const delivery_charges = await shiprocket.calculateShippingRate(
         delivery_pincode,
         totalWeight
@@ -61,6 +63,7 @@ app.post("/initiate", async (req, res) => {
         status: "Pending",
         razorpay_orderId: razorpayOrder.id,
         delivery_charges,
+        address: address_id,
     });
     res.send(await order.save());
 });

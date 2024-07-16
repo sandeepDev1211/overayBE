@@ -66,9 +66,10 @@ export const typeDefs = `#graphql
         removeProductFromWishlist(product_id: String!): AddedWishlist
     }
     input AddAddressInput {
+        name: String!,
         address_line_1: String!,
         address_line_2: String!,
-        landmark: String,
+        landmark: String!,
         pincode: Int!
     }
     input SortInput {

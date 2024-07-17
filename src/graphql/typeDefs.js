@@ -11,15 +11,32 @@ export const typeDefs = `#graphql
         product_id: String,
         image_name: String
     }
+    type User {
+        name: String!,
+        picture: String
+    }
+    type AddedReview {
+        user_id: String,
+        review: String,
+        score: Int,
+        product_id: String
+    }
+    type Review {
+        user_id: [User],
+        review: String,
+        score: Int
+    }
     type Product {
         _id: ID!,
         code: String!,
         price: Int!,
+        description: String!,
         discount: Int!,
         parent_id: String,
         categories: [Category!]!,
         default_image: String,
-        product_images: [ProductImage]
+        product_images: [ProductImage],
+        reviews: [Review]
     }
     type Category {
         _id: ID!,
@@ -64,6 +81,7 @@ export const typeDefs = `#graphql
         removeProductFromCart(product_id: String!): AddedCart
         addProductToWishlist(product_id: String!): AddedWishlist
         removeProductFromWishlist(product_id: String!): AddedWishlist
+        addProductReview(review: ReviewInput!): AddedReview
     }
     input AddAddressInput {
         name: String!,
@@ -86,5 +104,10 @@ export const typeDefs = `#graphql
         start: Int,
         limit: Int,
         code: String
+    }
+    input ReviewInput {
+        review: String,
+        score: Int,
+        product_id: String
     }
 `;

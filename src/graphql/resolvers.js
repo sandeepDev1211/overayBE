@@ -78,6 +78,14 @@ export const resolvers = {
                 .sort(sort)
                 .populate("categories")
                 .populate("product_images")
+                .populate({
+                    path: "reviews",
+                    populate: [
+                        {
+                            path: "user_id",
+                        },
+                    ],
+                })
                 .exec();
         },
         cart: async (parent, args, contextValue) => {
@@ -172,6 +180,35 @@ export const resolvers = {
                 { $pull: { products: args.product_id } },
                 { new: true, useFindAndModify: false }
             );
+        },
+        addProductReview: async (parent, args, contextValue) => {
+            return schemas.product_review
+                .findOne({
+                    user_id: contextValue.user._id,
+                    product_id: args.product_id,
+                })
+                .then((review) => {
+                    if (review) {
+                        // Cart found, update it
+                        return schemas.product_review.findOneAndUpdate(
+                            {
+                                user_id: contextValue.user._id,
+                                product_id: args.product_id,
+                            },
+                            { review: args.review, score: args.score },
+                            { new: true, useFindAndModify: false }
+                        );
+                    } else {
+                        // Cart not found, create a new one
+                        const newReview = new schemas.product_review({
+                            user_id: contextValue.user._id,
+                            product_id: args.product_id,
+                            review: args.review,
+                            score: args.score,
+                        });
+                        return newReview.save();
+                    }
+                });
         },
     },
 };

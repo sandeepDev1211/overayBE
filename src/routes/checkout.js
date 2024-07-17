@@ -33,7 +33,7 @@ app.post("/initiate", async (req, res) => {
 
         totalAmount +=
             (productDetail.price - productDetail.discount) * product.quantity;
-        totalWeight += productDetail.wieght * product.quantity;
+        totalWeight += productDetail.weight * product.quantity;
         orderDetails.push({
             product_id: productDetail._id,
             price: productDetail.price,

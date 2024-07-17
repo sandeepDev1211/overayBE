@@ -9,6 +9,7 @@ import product_image from "./product_image.js";
 import cart from "./cart.js";
 import wishlist from "./wishlist.js";
 import banner from "./banner.js";
+import product_review from "./product_review.js";
 
 export default {
     security_user,
@@ -22,4 +23,5 @@ export default {
     cart,
     wishlist,
     banner,
+    product_review,
 };

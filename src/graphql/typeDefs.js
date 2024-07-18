@@ -18,13 +18,13 @@ export const typeDefs = `#graphql
     type AddedReview {
         user_id: String,
         review: String,
-        score: Int,
+        score: Float,
         product_id: String
     }
     type Review {
         user_id: [User],
         review: String,
-        score: Int
+        score: Float
     }
     type Product {
         _id: ID!,
@@ -110,7 +110,7 @@ export const typeDefs = `#graphql
     }
     input ReviewInput {
         review: String,
-        score: Int,
+        score: Float,
         product_id: String
     }
 `;

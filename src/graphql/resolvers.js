@@ -189,33 +189,32 @@ export const resolvers = {
             );
         },
         addProductReview: async (parent, args, contextValue) => {
-            return schemas.product_review
-                .findOne({
+            const review = await schemas.product_review.findOne({
+                user_id: contextValue.user._id,
+                product_id: args.review.product_id,
+            });
+            if (!review) {
+                const newReview = new schemas.product_review({
                     user_id: contextValue.user._id,
-                    product_id: args.product_id,
-                })
-                .then((review) => {
-                    if (review) {
-                        // Cart found, update it
-                        return schemas.product_review.findOneAndUpdate(
-                            {
-                                user_id: contextValue.user._id,
-                                product_id: args.product_id,
-                            },
-                            { review: args.review, score: args.score },
-                            { new: true, useFindAndModify: false }
-                        );
-                    } else {
-                        // Cart not found, create a new one
-                        const newReview = new schemas.product_review({
-                            user_id: contextValue.user._id,
-                            product_id: args.product_id,
-                            review: args.review,
-                            score: args.score,
-                        });
-                        return newReview.save();
-                    }
+                    product_id: args.review.product_id,
+                    review: args.review.review,
+                    score: args.review.score,
                 });
+                await newReview.save();
+                return newReview;
+            } else {
+                return await schemas.product_review.findOneAndUpdate(
+                    {
+                        user_id: contextValue.user._id,
+                        product_id: args.review.product_id,
+                    },
+                    {
+                        review: args.review.review,
+                        score: args.review.score,
+                    },
+                    { new: true, useFindAndModify: false }
+                );
+            }
         },
     },
 };

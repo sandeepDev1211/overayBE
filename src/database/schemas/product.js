@@ -60,6 +60,10 @@ const productSchema = new Schema({
             type: String,
         },
     ],
+    created_on: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 export default model("product", productSchema);

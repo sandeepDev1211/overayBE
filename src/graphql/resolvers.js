@@ -25,6 +25,7 @@ export const resolvers = {
                     start: strt,
                     sort: sortOption,
                     code,
+                    keywords,
                 } = args.filter;
 
                 if (_id) {
@@ -44,6 +45,11 @@ export const resolvers = {
                         $in: categories.map(
                             (id) => new mongoose.Types.ObjectId(id)
                         ),
+                    };
+                }
+                if (keywords && keywords.length > 0) {
+                    filter.categories = {
+                        $in: keywords,
                     };
                 }
 

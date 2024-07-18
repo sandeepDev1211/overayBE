@@ -36,7 +36,8 @@ export const typeDefs = `#graphql
         categories: [Category!]!,
         default_image: String,
         product_images: [ProductImage],
-        reviews: [Review]
+        reviews: [Review],
+        keywords: [String]
     }
     type Category {
         _id: ID!,
@@ -103,7 +104,8 @@ export const typeDefs = `#graphql
         sort: SortInput,
         start: Int,
         limit: Int,
-        code: String
+        code: String,
+        keywords: [String]
     }
     input ReviewInput {
         review: String,

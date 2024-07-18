@@ -28,6 +28,7 @@ export const typeDefs = `#graphql
     }
     type Product {
         _id: ID!,
+        name: String!,
         code: String!,
         price: Int!,
         description: String!,

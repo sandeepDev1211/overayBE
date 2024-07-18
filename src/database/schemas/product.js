@@ -55,6 +55,11 @@ const productSchema = new Schema({
         type: Number,
         required: true,
     },
+    keywords: [
+        {
+            type: String,
+        },
+    ],
 });
 
 export default model("product", productSchema);

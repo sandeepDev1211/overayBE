@@ -24,6 +24,7 @@ export const resolvers = {
                     limit: lim,
                     start: strt,
                     sort: sortOption,
+                    code,
                 } = args.filter;
 
                 if (_id) {

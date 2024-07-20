@@ -161,25 +161,20 @@ export const resolvers = {
             );
         },
         addProductToWishlist: async (parent, args, contextValue) => {
-            return schemas.wishlist
-                .findOne({ user_id: contextValue.user._id })
-                .then((cart) => {
-                    if (cart) {
-                        // Cart found, update it
-                        return schemas.wishlist.findOneAndUpdate(
-                            { user_id: contextValue.user._id },
-                            { $push: { products: args.product_id } },
-                            { new: true, useFindAndModify: false }
-                        );
-                    } else {
-                        // Cart not found, create a new one
-                        const newCart = new schemas.wishlist({
-                            user_id: contextValue.user._id,
-                            products: [args.product_id],
-                        });
-                        return newCart.save();
-                    }
+            let wishlist = await schemas.wishlist.findOne({
+                user_id: contextValue.user._id,
+            });
+            if (!wishlist) {
+                wishlist = new schemas.wishlist({
+                    user_id: contextValue.user._id,
+                    products: [args.product_id],
                 });
+                wishlist = await wishlist.save();
+                return wishlist;
+            }
+            wishlist.products = [...wishlist.products, args.product_id];
+            wishlist = await wishlist.save();
+            return wishlist;
         },
         removeProductFromWishlist: async (parent, args, contextValue) => {
             return schemas.wishlist.findOneAndUpdate(
@@ -189,32 +184,28 @@ export const resolvers = {
             );
         },
         addProductReview: async (parent, args, contextValue) => {
-            const review = await schemas.product_review.findOne({
+            const { review, score, product_id } = args.review;
+
+            let product_review = await schemas.product_review.findOne({
                 user_id: contextValue.user._id,
-                product_id: args.review.product_id,
+                product_id: product_id,
             });
-            if (!review) {
+            if (!product_review) {
                 const newReview = new schemas.product_review({
                     user_id: contextValue.user._id,
-                    product_id: args.review.product_id,
-                    review: args.review.review,
-                    score: args.review.score,
+                    product_id: product_id,
+                    review: review,
+                    score: score,
                 });
-                await newReview.save();
-                return newReview;
-            } else {
-                return await schemas.product_review.findOneAndUpdate(
-                    {
-                        user_id: contextValue.user._id,
-                        product_id: args.review.product_id,
-                    },
-                    {
-                        review: args.review.review,
-                        score: args.review.score,
-                    },
-                    { new: true, useFindAndModify: false }
-                );
+                product_review = await newReview.save();
+                console.log(product_review);
+                return product_review;
             }
+            product_review.review = review;
+            product_review.score = score;
+            product_review = await product_review.save();
+            console.log(product_review);
+            return product_review;
         },
     },
 };

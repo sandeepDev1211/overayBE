@@ -20,6 +20,7 @@ productImageSchema.post("save", (doc, next) => {
                 $push: { product_images: doc._id },
             })
             .exec();
+        next();
     } catch (error) {
         logger.error(error);
     }
@@ -29,5 +30,6 @@ productImageSchema.post("findOneAndDelete", (doc, next) => {
     product.findByIdAndUpdate(doc.product_id, {
         $pull: { product_images: doc._id },
     });
+    next();
 });
 export default model("product_img", productImageSchema);

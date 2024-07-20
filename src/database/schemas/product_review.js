@@ -30,6 +30,7 @@ productReviewSchema.post("save", (doc, next) => {
                 $push: { reviews: doc._id },
             })
             .exec();
+        next();
     } catch (err) {
         logger.error(err);
     }
@@ -39,6 +40,7 @@ productReviewSchema.post("findOneAndDelete", (doc, next) => {
     product.findByIdAndUpdate(doc.product_id, {
         $pull: { product_images: doc._id },
     });
+    next();
 });
 
 export default model("product_review", productReviewSchema);

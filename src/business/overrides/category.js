@@ -7,12 +7,12 @@ class Category extends BusinessBase {
     async saveOrUpdate({ data, files = [] }) {
         try {
             const file = files[0];
-            if (file) {
-                data.image = file.filename;
-            }
-            const { _id, ...updateData } =
-                typeof data === "object" ? data : JSON.parse(data);
 
+            const { _id, ...updateData } =
+                typeof data === "string" ? JSON.parse(data) : data;
+            if (file) {
+                updateData.image = file.filename;
+            }
             let result;
             if (_id) {
                 result = await this.Schema.findByIdAndUpdate(_id, updateData, {

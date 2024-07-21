@@ -48,7 +48,7 @@ export const resolvers = {
                     };
                 }
                 if (keywords && keywords.length > 0) {
-                    filter.categories = {
+                    filter.keywords = {
                         $in: keywords,
                     };
                 }

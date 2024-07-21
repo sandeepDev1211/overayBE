@@ -22,7 +22,7 @@ export const typeDefs = `#graphql
         product_id: String
     }
     type Review {
-        user_id: [User],
+        user_id: User,
         review: String,
         score: Float
     }

@@ -20,7 +20,7 @@ class Category extends BusinessBase {
                     upsert: true,
                 }).exec();
             } else {
-                const newDocument = new this.Schema(data);
+                const newDocument = new this.Schema(updateData);
                 result = await newDocument.save();
             }
             return result;

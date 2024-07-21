@@ -47,13 +47,21 @@ export const typeDefs = `#graphql
         parent_category: String,
         image: String
     }
+    type AddedCartProduct {
+        productId: String
+        quantity: Int
+    }
+    type CartProduct {
+        productId: Product,
+        quantity: Int
+    }
     type Cart {
         _id: ID!,
-        products: [Product]
+        products: [CartProduct]
     }
     type AddedCart {
         _id: ID!,
-        products: [String]
+        products: [AddedCartProduct]
     }
     type Wishlist {
         _id: ID!,
@@ -79,7 +87,7 @@ export const typeDefs = `#graphql
     }
     type Mutation {
         addAddress(address: AddAddressInput!): Address
-        addProductToCart(product_id: String!): AddedCart
+        addProductToCart(products: CartInput): AddedCart
         removeProductFromCart(product_id: String!): AddedCart
         addProductToWishlist(product_id: String!): AddedWishlist
         removeProductFromWishlist(product_id: String!): AddedWishlist
@@ -112,5 +120,9 @@ export const typeDefs = `#graphql
         review: String,
         score: Float,
         product_id: String
+    }
+    input CartInput {
+        product_id: ID!
+        quantity: Int
     }
 `;

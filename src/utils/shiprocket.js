@@ -3,8 +3,8 @@ import logger from "./logger.js";
 class Shiprocket {
     constructor() {
         this.apiUrl = "https://apiv2.shiprocket.in/v1/external";
-        this.email = "";
-        this.password = "";
+        this.email = process.env.Shiprocket_Email;
+        this.password = process.env.Shiprocket_Password;
         this.token = null;
     }
 

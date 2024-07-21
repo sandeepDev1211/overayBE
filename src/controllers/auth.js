@@ -10,7 +10,7 @@ const registerUser = async (userData) => {
         await user.save();
         const userData = new schemas.user({
             name: user.name,
-            security_userId: user.id,
+            _id: user.id,
         });
         userData.save();
         return { error: false, message: "Created" };

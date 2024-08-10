@@ -1,9 +1,14 @@
 import schemas from "../database/schemas/index.js";
 import mongoose from "mongoose";
 
+const checkAuthentication = (context) => {
+    if (!context.user) throw new Error("You must be logged in");
+};
+
 export const resolvers = {
     Query: {
         addresses: async (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
             return await schemas.address.find({
                 user_Id: contextValue.user._id,
             });
@@ -17,6 +22,8 @@ export const resolvers = {
                 const {
                     _id,
                     categories,
+                    size,
+                    color,
                     minPrice,
                     maxPrice,
                     name,
@@ -33,6 +40,14 @@ export const resolvers = {
 
                 if (name) {
                     filter.name = { $regex: name, $options: "i" };
+                }
+
+                if (size) {
+                    filter.size = size;
+                }
+
+                if (color) {
+                    filter.color = color;
                 }
 
                 if (code) {
@@ -95,6 +110,7 @@ export const resolvers = {
                 .exec();
         },
         cart: async (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
             const data = await schemas.cart
                 .findOne({
                     user_id: contextValue.user._id,
@@ -110,6 +126,7 @@ export const resolvers = {
             return data;
         },
         wishlist: async (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
             return await schemas.wishlist.findOne({
                 user_id: contextValue.user._id,
             });
@@ -120,9 +137,13 @@ export const resolvers = {
         banner: async () => {
             return await schemas.banner.find().exec();
         },
+        lookup: async () => {
+            return await schemas.lookup.find().exec();
+        },
     },
     Mutation: {
         addAddress: (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
             return schemas.address.create({
                 address_line_1: args.address.address_line_1,
                 address_line_2: args.address.address_line_2,
@@ -132,6 +153,7 @@ export const resolvers = {
             });
         },
         addProductToCart: async (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
             const { product_id, quantity = null } = args.products;
             let cart = await schemas.cart.findOne({
                 user_id: contextValue.user._id,
@@ -158,6 +180,7 @@ export const resolvers = {
             return cart.save();
         },
         removeProductFromCart: async (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
             return schemas.cart.findOneAndUpdate(
                 { user_id: contextValue.user._id },
                 { $pull: { products: { productId: args.product_id } } },
@@ -165,6 +188,7 @@ export const resolvers = {
             );
         },
         addProductToWishlist: async (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
             let wishlist = await schemas.wishlist.findOne({
                 user_id: contextValue.user._id,
             });
@@ -181,6 +205,7 @@ export const resolvers = {
             return wishlist;
         },
         removeProductFromWishlist: async (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
             return schemas.wishlist.findOneAndUpdate(
                 { user_id: contextValue.user._id },
                 { $pull: { products: args.product_id } },
@@ -188,6 +213,7 @@ export const resolvers = {
             );
         },
         addProductReview: async (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
             const { review, score, product_id } = args.review;
 
             let product_review = await schemas.product_review.findOne({

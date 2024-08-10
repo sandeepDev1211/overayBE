@@ -42,9 +42,11 @@ import shiprocket from "./utils/shiprocket.js";
     app.use(
         "/v1/graphql",
         Express.json(),
-        jwtHelper.verifyToken,
         expressMiddleware(apolloServer, {
-            context: async ({ req }) => ({ user: req.user }),
+            context: async ({ req }) => {
+                const user = jwtHelper.verifyGraphqlToken(req);
+                return { user };
+            },
         })
     );
     app.use("/v1/admin", jwtHelper.verifyAdminToken, admin);

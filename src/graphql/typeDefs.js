@@ -33,7 +33,9 @@ export const typeDefs = `#graphql
         price: Int!,
         description: String!,
         discount: Int!,
-        parent_id: String,
+        size: String!,
+        color: String!,
+        parent_id: String!,
         categories: [Category!]!,
         default_image: String,
         product_images: [ProductImage],
@@ -58,6 +60,11 @@ export const typeDefs = `#graphql
     type Cart {
         _id: ID!,
         products: [CartProduct]
+    }
+    type Lookup {
+        name: String!,
+        lookuptype: String!,
+        description: String!,
     }
     type AddedCart {
         _id: ID!,
@@ -84,6 +91,7 @@ export const typeDefs = `#graphql
         wishlist: Wishlist
         category: [Category]
         banner: [Banner]
+        lookup: [Lookup]
     }
     type Mutation {
         addAddress(address: AddAddressInput!): Address
@@ -108,6 +116,8 @@ export const typeDefs = `#graphql
         _id: ID,
         name: String,
         categories: [ID!],
+        size: String,
+        color: String,
         minPrice: Float,
         maxPrice: Float,
         sort: SortInput,

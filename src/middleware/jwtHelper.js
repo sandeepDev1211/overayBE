@@ -25,20 +25,14 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-const verifyGraphqlToken = (req, res) => {
-    if (!req.headers.authorization) {
-        throw new ApolloServerErrorCode(401);
-    }
-    const token = req.headers["authorization"].split(" ")[1];
-    if (!token) {
-        return res.status(401).send("Access denied. No token provided.");
-    }
-    try {
+const verifyGraphqlToken = (req) => {
+    let user = null;
+    if (req.headers.authorization) {
+        const token = req.headers["authorization"].split(" ")[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        return decoded.user;
-    } catch (err) {
-        res.status(400).send("Invalid token.");
+        user = decoded.user;
     }
+    return user;
 };
 
 const verifyAdminToken = (req, res, next) => {

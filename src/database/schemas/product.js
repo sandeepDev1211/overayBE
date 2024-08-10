@@ -5,6 +5,10 @@ const productSchema = new Schema({
         type: String,
         required: true,
     },
+    sku: {
+        type: String,
+        required: true,
+    },
     code: {
         type: String,
         required: true,
@@ -19,6 +23,14 @@ const productSchema = new Schema({
     },
     discount: {
         type: Number,
+        required: true,
+    },
+    color: {
+        type: String,
+        required: true,
+    },
+    size: {
+        type: String,
         required: true,
     },
     parent_id: {

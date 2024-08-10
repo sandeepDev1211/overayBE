@@ -19,6 +19,10 @@ const config = {
     },
     ProductImage: ProductImage,
     Banner: Banner,
+    Lookup: {
+        Schema: schemas.lookup,
+        keyField: "_id",
+    },
 };
 
 export default config;

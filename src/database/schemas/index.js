@@ -10,6 +10,7 @@ import cart from "./cart.js";
 import wishlist from "./wishlist.js";
 import banner from "./banner.js";
 import product_review from "./product_review.js";
+import lookup from "./lookup.js";
 
 export default {
     security_user,
@@ -24,4 +25,5 @@ export default {
     wishlist,
     banner,
     product_review,
+    lookup,
 };

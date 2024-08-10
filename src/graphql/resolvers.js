@@ -1,8 +1,18 @@
 import schemas from "../database/schemas/index.js";
 import mongoose from "mongoose";
+import { GraphQLError } from "graphql";
 
 const checkAuthentication = (context) => {
-    if (!context.user) throw new Error("You must be logged in");
+    if (!context.user)
+        throw new GraphQLError(
+            "You are not authorized to perform this action.",
+            {
+                extensions: {
+                    code: "UNAUTHENTICATED",
+                    http: { status: 401 },
+                },
+            }
+        );
 };
 
 export const resolvers = {

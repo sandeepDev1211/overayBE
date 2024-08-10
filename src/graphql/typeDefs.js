@@ -32,6 +32,7 @@ export const typeDefs = `#graphql
         code: String!,
         price: Int!,
         description: String!,
+        long_description: String,
         discount: Int!,
         size: String!,
         color: String!,

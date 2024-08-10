@@ -64,7 +64,7 @@ export const typeDefs = `#graphql
     }
     type Lookup {
         name: String!,
-        lookuptype: String!,
+        lookup_type: String!,
         description: String!,
     }
     type AddedCart {

@@ -1,4 +1,3 @@
-import { ApolloServerErrorCode } from "@apollo/server/errors";
 import jwt from "jsonwebtoken";
 
 const createToken = (user) => {
@@ -45,7 +44,8 @@ const verifyAdminToken = (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (!decoded.user.isInternal) throw "Unauthorised";
+        if (!decoded.user.isInternal)
+            return res.status(401).send("Unauthorized request");
         req.user = decoded.user;
         next();
     } catch (err) {

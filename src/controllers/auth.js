@@ -1,20 +1,28 @@
 import schemas from "../database/schemas/index.js";
 import jwtHelper from "../middleware/jwtHelper.js";
 import bcrypt from "bcryptjs";
-import utils from "../utils/index.js";
+import utils from "./utils.js";
+import logger from "../utils/logger.js";
 
 const registerUser = async (userData) => {
     userData.password = await bcrypt.hash(userData.password, 10);
     const user = new schemas.security_user(userData);
     try {
+        user.verificationToken = jwtHelper.createVerificationToken(user.email);
         await user.save();
         const userData = new schemas.user({
             name: user.name,
             _id: user.id,
         });
         userData.save();
-        return { error: false, message: "Created" };
+        utils.createVerificationEmail({
+            verificationToken: user.verificationToken,
+            name: user.name,
+            email: user.email,
+        });
+        return { error: false, message: "Verify your email" };
     } catch (error) {
+        logger.error(error);
         const errorMessage = {
             error: true,
             message:
@@ -56,4 +64,41 @@ const updateUser = async (userId, userData) => {
     return { message: "updated" };
 };
 
-export default { registerUser, loginUser, getUser, updateUser };
+const changePassword = async ({ oldPassword, newPassword, userCache }) => {
+    const user = await schemas.security_user.findById(userCache._id);
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordValid) {
+        return { message: "Current Password is wrong", error: true };
+    }
+    user.password = newPassword;
+    user.save();
+    return { message: "updated" };
+};
+
+const verifyUser = async ({ token }) => {
+    const decodedToken = jwtHelper.verifyVerificationToken(token);
+    if (!decodedToken) {
+        return "Invalid URL";
+    }
+    const user = await schemas.security_user.findOne({
+        email: decodedToken.email,
+        verificationToken: token,
+    });
+    if (!user) {
+        return "Invalid URL";
+    }
+    user.isEmailVerified = true;
+    user.verificationToken = null;
+    user.isActive = true;
+    user.save();
+    return "Verified";
+};
+
+export default {
+    registerUser,
+    loginUser,
+    getUser,
+    updateUser,
+    changePassword,
+    verifyUser,
+};

@@ -11,6 +11,8 @@ import { resolvers } from "./graphql/resolvers.js";
 import jwtHelper from "./middleware/jwtHelper.js";
 import admin from "./routes/admin/index.js";
 import shiprocket from "./utils/shiprocket.js";
+import processEmail from "./mail-sender.js";
+import cron from "node-cron";
 
 (async () => {
     databaseOperations.createConnection();
@@ -51,6 +53,8 @@ import shiprocket from "./utils/shiprocket.js";
     );
     app.use("/v1/admin", jwtHelper.verifyAdminToken, admin);
     shiprocket.initialize();
+    const task = cron.schedule("* * * * *", processEmail);
+    task.start();
     app.listen(
         process.env.PORT,
         console.log(`Listening to port ${process.env.PORT}`)

@@ -38,9 +38,29 @@ app.post(
     }
 );
 
+app.post("/user/change-password", jwtHelper.verifyToken, async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const message = await auth.changePassword({
+        oldPassword,
+        newPassword,
+        userCache: req.user,
+    });
+    res.json(message);
+});
+
 app.get("/user", jwtHelper.verifyToken, async (req, res) => {
     const user = await auth.getUser(req.user._id);
     res.json({ user });
+});
+
+app.get("/user/verify/:token", async (req, res) => {
+    const token = req.params.token;
+    const message = await auth.verifyUser({ token });
+    res.send(message);
+});
+
+app.post("/user/forget-password", async (req, res) => {
+    const { email } = req.body;
 });
 
 export default app;

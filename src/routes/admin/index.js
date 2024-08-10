@@ -56,8 +56,8 @@ app.post(
 
 app.post("/:businessObjectName/delete", async (req, res) => {
     const { businessObject } = req;
-    const { data } = req.body;
-    const result = await businessObject.delete(data._id);
+    const id = req.body?._id;
+    const result = await businessObject.delete(id);
     return res.json(result);
 });
 

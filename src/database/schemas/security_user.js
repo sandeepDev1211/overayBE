@@ -28,7 +28,10 @@ const userSchema = new Schema({
     },
     isActive: {
         type: Boolean,
-        default: true,
+        default: false,
+    },
+    verificationToken: {
+        type: String,
     },
     isInternal: {
         type: Boolean,

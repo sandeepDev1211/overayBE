@@ -11,6 +11,8 @@ import wishlist from "./wishlist.js";
 import banner from "./banner.js";
 import product_review from "./product_review.js";
 import lookup from "./lookup.js";
+import email_queue from "./email_queue.js";
+import email_recipient from "./email_recipient.js";
 
 export default {
     security_user,
@@ -26,4 +28,6 @@ export default {
     banner,
     product_review,
     lookup,
+    email_queue,
+    email_recipient,
 };

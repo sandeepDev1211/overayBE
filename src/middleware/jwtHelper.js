@@ -7,6 +7,22 @@ const createToken = (user) => {
     return token;
 };
 
+const createVerificationToken = (email) => {
+    const token = jwt.sign({ email }, process.env.JWT_SECRET_VERIFICATION, {
+        expiresIn: "1d",
+    });
+    return token;
+};
+
+const verifyVerificationToken = (token) => {
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_VERIFICATION);
+        return decoded;
+    } catch (err) {
+        return null;
+    }
+};
+
 const verifyToken = (req, res, next) => {
     if (!req.headers.authorization) {
         return res.status(401).send("Unauthorized request");
@@ -58,4 +74,6 @@ export default {
     verifyToken,
     verifyAdminToken,
     verifyGraphqlToken,
+    createVerificationToken,
+    verifyVerificationToken,
 };

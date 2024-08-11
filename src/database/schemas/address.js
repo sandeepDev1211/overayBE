@@ -5,6 +5,14 @@ const addressSchema = new Schema({
         type: String,
         required: true,
     },
+    email: {
+        type: String,
+        required: true,
+    },
+    phone_number: {
+        type: String,
+        required: true,
+    },
     address_line_1: {
         type: String,
         required: true,
@@ -13,7 +21,15 @@ const addressSchema = new Schema({
         type: String,
         required: true,
     },
-    landmark: {
+    city: {
+        type: String,
+        required: true,
+    },
+    state: {
+        type: String,
+        required: true,
+    },
+    country: {
         type: String,
         required: true,
     },

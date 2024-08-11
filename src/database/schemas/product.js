@@ -37,9 +37,6 @@ const productSchema = new Schema({
         type: String,
         required: true,
     },
-    parent_id: {
-        type: Types.ObjectId,
-    },
     categories: [
         {
             type: Types.ObjectId,

@@ -1,10 +1,15 @@
 export const typeDefs = `#graphql
     type Address {
         _id: ID!,
-        address_line_1: String!,
-        address_line_2: String!,
-        landmark: String,
-        pincode: Int!
+        name: String,
+        email: String,
+        phone_number: Int,
+        address_line_1: String,
+        address_line_2: String,
+        city: String,
+        state: String,
+        country: String,
+        pincode: Int
     }
     type ProductImage {
         _id: ID!,
@@ -36,7 +41,6 @@ export const typeDefs = `#graphql
         discount: Int!,
         size: String!,
         color: String!,
-        parent_id: String!,
         categories: [Category!]!,
         default_image: String,
         product_images: [ProductImage],
@@ -103,11 +107,15 @@ export const typeDefs = `#graphql
         addProductReview(review: ReviewInput!): AddedReview
     }
     input AddAddressInput {
-        name: String!,
-        address_line_1: String!,
-        address_line_2: String!,
-        landmark: String!,
-        pincode: Int!
+        name: String,
+        email: String,
+        phone_number: Int,
+        address_line_1: String,
+        address_line_2: String,
+        city: String,
+        state: String,
+        country: String,
+        pincode: Int
     }
     input SortInput {
         field: String!,

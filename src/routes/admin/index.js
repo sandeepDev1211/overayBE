@@ -2,6 +2,7 @@ import { Router } from "express";
 import businessBaseConfigs from "../../business/business-object-config.js";
 import { classMap } from "../../business/business-base.js";
 import utils from "../../utils/index.js";
+import order from "./order.js";
 const app = Router();
 
 /* This code snippet is iterating over each key in the `businessBaseConfigs` object using a `for...in`
@@ -67,5 +68,7 @@ app.get("/:businessObjectName/:id", async (req, res) => {
     const result = await businessObject.load(id);
     return res.json(result);
 });
+
+app.use("/order", order);
 
 export default app;

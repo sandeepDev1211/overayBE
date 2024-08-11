@@ -3,8 +3,8 @@ import logger from "./logger.js";
 class Shiprocket {
     constructor() {
         this.apiUrl = "https://apiv2.shiprocket.in/v1/external";
-        this.email = process.env.Shiprocket_Email;
-        this.password = process.env.Shiprocket_Password;
+        this.email = process.env.SHIPROCKET_EMAIL;
+        this.password = process.env.SHIPROCKET_PASSWORD;
         this.token = null;
     }
 
@@ -29,7 +29,7 @@ class Shiprocket {
     async calculateShippingRate(deliveryPinCode, totalWeight) {
         try {
             const response = await fetch(
-                `${this.apiUrl}/courier/serviceability?pickup_postcode=110010&delivery_postcode=${deliveryPinCode}&weight=${totalWeight}&cod=0`,
+                `${this.apiUrl}/courier/serviceability?pickup_postcode=110045&delivery_postcode=${deliveryPinCode}&weight=${totalWeight}&cod=0`,
                 {
                     method: "GET",
                     headers: {
@@ -38,6 +38,21 @@ class Shiprocket {
                     },
                 }
             ).then((res) => res.json());
+            return response;
+        } catch (error) {
+            logger.error(error);
+        }
+    }
+    async createOrder(orderDetails) {
+        try {
+            const response = fetch(`${this.apiUrl}/orders/create/adhoc`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.token}`,
+                },
+                body: JSON.stringify(orderDetails),
+            }).then((res) => res.json());
             return response;
         } catch (error) {
             logger.error(error);

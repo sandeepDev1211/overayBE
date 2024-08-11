@@ -3,13 +3,13 @@ export const typeDefs = `#graphql
         _id: ID!,
         name: String,
         email: String,
-        phone_number: Int,
+        phone_number: String,
         address_line_1: String,
         address_line_2: String,
         city: String,
         state: String,
         country: String,
-        pincode: Int
+        pincode: String
     }
     type ProductImage {
         _id: ID!,
@@ -109,13 +109,13 @@ export const typeDefs = `#graphql
     input AddAddressInput {
         name: String,
         email: String,
-        phone_number: Int,
+        phone_number: String,
         address_line_1: String,
         address_line_2: String,
         city: String,
         state: String,
         country: String,
-        pincode: Int
+        pincode: String
     }
     input SortInput {
         field: String!,

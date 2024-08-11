@@ -54,7 +54,7 @@ app.post("/initiate", async (req, res) => {
     const delivery_pincode = address.pincode;
     const delivery_charges = await shiprocket.calculateShippingRate(
         delivery_pincode,
-        totalWeight
+        totalWeight / 1000
     );
     const order = new schemas.order({
         user_id: userId,

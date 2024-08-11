@@ -154,13 +154,9 @@ export const resolvers = {
     Mutation: {
         addAddress: (parent, args, contextValue) => {
             checkAuthentication(contextValue);
-            return schemas.address.create({
-                address_line_1: args.address.address_line_1,
-                address_line_2: args.address.address_line_2,
-                landmark: args.address.landmark,
-                pincode: args.address.pincode,
-                user_id: contextValue.user._id,
-            });
+            const address = args.address;
+            address.user_id = contextValue.user._id;
+            return schemas.address.create(address);
         },
         addProductToCart: async (parent, args, contextValue) => {
             checkAuthentication(contextValue);

@@ -10,7 +10,7 @@ const addressSchema = new Schema({
         required: true,
     },
     phone_number: {
-        type: String,
+        type: Number,
         required: true,
     },
     address_line_1: {

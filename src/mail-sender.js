@@ -37,7 +37,7 @@ const getEmailTemplate = async (templateName) => {
 async function sendEmail(recipient, subject, html) {
     const msg = {
         to: recipient.email,
-        from: "mail@therohankumar.com",
+        from: process.env.SENDER_EMAIL,
         subject: subject,
         html: html,
     };

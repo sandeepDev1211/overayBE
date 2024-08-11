@@ -38,14 +38,19 @@ class Shiprocket {
                     },
                 }
             ).then((res) => res.json());
-            return response;
+            const company_id = response.data.shiprocket_recommended_courier_id;
+            const delivery_data =
+                response.data.available_courier_companies.find(
+                    (x) => (x.courier_company_id = company_id)
+                );
+            return delivery_data;
         } catch (error) {
             logger.error(error);
         }
     }
-    async createOrder(orderDetails) {
+    async createOrder(orderDetails, courier_company_id) {
         try {
-            const response = fetch(`${this.apiUrl}/orders/create/adhoc`, {
+            const order = await fetch(`${this.apiUrl}/orders/create/adhoc`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -53,7 +58,19 @@ class Shiprocket {
                 },
                 body: JSON.stringify(orderDetails),
             }).then((res) => res.json());
-            return response;
+            const shipment_details = {
+                shipment_id: order.shipment_id,
+                courier_id: courier_company_id,
+            };
+            const shipment = await fetch(`${this.apiUrl}/courier/assign/awb`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.token}`,
+                },
+                body: JSON.stringify(shipment_details),
+            }).then((res) => res.json());
+            return shipment;
         } catch (error) {
             logger.error(error);
         }

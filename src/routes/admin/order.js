@@ -1,18 +1,20 @@
 import { Router } from "express";
 import schemas from "../../database/schemas/index.js";
+import shiprocket from "../../utils/shiprocket.js";
 const app = Router();
 app.post("/create-shipment", async (req, res) => {
-    const { order_id, height, wieght, length, breadth } = req.body;
+    const { order_id, height, weight, length, breadth } = req.body;
     const order = await schemas.order
         .findById(order_id)
         .populate("address")
-        .populate("product.product_id")
+        .populate("products.product_id")
         .exec();
     const orderDetail = {
         order_id: order._id,
         order_date: order.created_at,
         pickup_location: process.env.PRIMARY_PICKUP_NAME,
         billing_customer_name: order.address.name,
+        billing_last_name: "",
         billing_address: order.address.address_line_1,
         billing_address_2: order.address.address_line_2,
         billing_city: order.address.city,
@@ -31,7 +33,7 @@ app.post("/create-shipment", async (req, res) => {
         length: length,
         breadth: breadth,
         height: height,
-        weight: wieght,
+        weight: weight,
     };
     orderDetail.order_items = order.products.map((product) => {
         const item = {
@@ -43,5 +45,11 @@ app.post("/create-shipment", async (req, res) => {
         };
         return item;
     });
+    const response = await shiprocket.createOrder(
+        orderDetail,
+        order.courier_company_id
+    );
+    order.awb = response.awb_code;
+    res.json(order);
 });
 export default app;

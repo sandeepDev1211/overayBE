@@ -48,6 +48,10 @@ const orderSchema = new Schema({
         ref: "address",
         required: true,
     },
+    courier_company_id: {
+        type: Number,
+        required: true,
+    },
     delivery_charges: {
         type: Number,
         required: true,
@@ -70,6 +74,9 @@ const orderSchema = new Schema({
         default: Date.now,
     },
     razorpay_orderId: {
+        type: String,
+    },
+    awb: {
         type: String,
     },
 });

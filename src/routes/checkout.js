@@ -44,25 +44,28 @@ app.post("/initiate", async (req, res) => {
                 product.quantity,
         });
     }
-    const razorpayOrder = await razorpay.orders.create({
-        amount: totalAmount * 100,
-        currency: "INR",
-        receipt: "recipt#1",
-        partial_payment: false,
-    });
     const address = await schemas.address.findById(address_id);
     const delivery_pincode = address.pincode;
     const delivery_charges = await shiprocket.calculateShippingRate(
         delivery_pincode,
         totalWeight / 1000
     );
+    totalAmount += delivery_charges.rate;
+    const razorpayOrder = await razorpay.orders.create({
+        amount: totalAmount * 100,
+        currency: "INR",
+        receipt: "recipt#1",
+        partial_payment: false,
+    });
+
     const order = new schemas.order({
         user_id: userId,
         products: orderDetails,
         total_amount: totalAmount,
         status: "Pending",
         razorpay_orderId: razorpayOrder.id,
-        delivery_charges,
+        delivery_charges: delivery_charges.rate,
+        courier_company_id: delivery_charges.courier_company_id,
         address: address_id,
     });
     res.send(await order.save());

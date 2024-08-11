@@ -13,6 +13,7 @@ import product_review from "./product_review.js";
 import lookup from "./lookup.js";
 import email_queue from "./email_queue.js";
 import email_recipient from "./email_recipient.js";
+import reset_password from "./reset_password.js";
 
 export default {
     security_user,
@@ -30,4 +31,5 @@ export default {
     lookup,
     email_queue,
     email_recipient,
+    reset_password,
 };

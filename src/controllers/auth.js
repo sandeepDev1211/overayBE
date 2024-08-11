@@ -70,7 +70,7 @@ const changePassword = async ({ oldPassword, newPassword, userCache }) => {
     if (!isPasswordValid) {
         return { message: "Current Password is wrong", error: true };
     }
-    user.password = newPassword;
+    user.password = await bcrypt.hash(newPassword, 10);
     user.save();
     return { message: "updated" };
 };
@@ -94,6 +94,40 @@ const verifyUser = async ({ token }) => {
     return "Verified";
 };
 
+const forgotPassword = async (email) => {
+    const user = await schemas.security_user.findOne({ email });
+    if (!user) {
+        return { message: "User not found", error: true };
+    }
+    const otp = Math.floor(100000 + Math.random() * 900000)
+        .toString()
+        .padStart(6, "0");
+    utils.createResetPasswordEmail({ name: user.name, email: user.email, otp });
+    return { message: "OTP Sent" };
+};
+
+const verifyOTP = async (email, otp) => {
+    const reset_password = await schemas.reset_password.findOne({
+        email,
+        otp,
+        expiresAt: { $gt: new Date() },
+    });
+    if (!reset_password) {
+        return { message: "Invalid OTP", error: true };
+    }
+    return { message: "OTP verified successfully" };
+};
+
+const updatePassword = async (email, password) => {
+    password = await bcrypt.hash(password, 10);
+    const user = await schemas.security_user.findOneAndUpdate(
+        { email },
+        { $set: { password } }
+    );
+    schemas.reset_password.findOneAndDelete({ email });
+    return { message: "Password Reset Successful" };
+};
+
 export default {
     registerUser,
     loginUser,
@@ -101,4 +135,7 @@ export default {
     updateUser,
     changePassword,
     verifyUser,
+    forgotPassword,
+    verifyOTP,
+    updatePassword,
 };

@@ -61,6 +61,24 @@ app.get("/user/verify/:token", async (req, res) => {
 
 app.post("/user/forget-password", async (req, res) => {
     const { email } = req.body;
+    const message = await auth.forgotPassword(email);
+    res.send(message);
+});
+
+app.post("/user/verify-otp", async (req, res) => {
+    const { email, otp } = req.body;
+    const message = await auth.verifyOTP(email, otp);
+    res.json(message);
+});
+
+app.post("/user/reset-password", async (req, res) => {
+    const { email, otp, password } = req.body;
+    const { error } = await auth.verifyOTP(email, otp);
+    if (error) {
+        res.json({ message: "Session Expired" });
+    }
+    const message = await auth.updatePassword(email, password);
+    res.json(message);
 });
 
 export default app;

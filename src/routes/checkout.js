@@ -72,7 +72,7 @@ app.post("/complete", async (req, res) => {
     const { paymentId, orderId } = req.body;
     const payment = await razorpay.payments.fetch(paymentId);
     if (payment.status !== "captured")
-        return res.send({ message: "Payment not successful " });
+        return res.send({ message: "Payment not successful" });
     const order = await schemas.order.findOne({ razorpay_orderId: orderId });
     for (const product of order.products) {
         schemas.product.updateOne(

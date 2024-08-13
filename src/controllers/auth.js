@@ -2,6 +2,7 @@ import schemas from "../database/schemas/index.js";
 import jwtHelper from "../middleware/jwtHelper.js";
 import bcrypt from "bcryptjs";
 import utils from "./utils.js";
+import globalUtil from "../utils/index.js";
 import logger from "../utils/logger.js";
 
 const registerUser = async (userData) => {
@@ -61,7 +62,7 @@ const getUser = async (userId) => {
 const updateUser = async (userId, userData) => {
     let user = await schemas.user.findById(userId);
     if (!user) return { message: "User Not Found", error: true };
-    user = utils.updateObject(user, userData);
+    user = globalUtil.updateObject(user, userData);
     user.save();
     return { message: "updated" };
 };

@@ -59,7 +59,7 @@ const getUser = async (userId) => {
 };
 
 const updateUser = async (userId, userData) => {
-    let user = await schemas.user.findOne({ security_userId: userId });
+    let user = await schemas.user.findById(userId);
     if (!user) return { message: "User Not Found", error: true };
     user = utils.updateObject(user, userData);
     user.save();

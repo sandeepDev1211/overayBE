@@ -20,7 +20,7 @@ export const resolvers = {
         addresses: async (parent, args, contextValue) => {
             checkAuthentication(contextValue);
             return await schemas.address.find({
-                user_Id: contextValue.user._id,
+                user_id: contextValue.user._id,
             });
         },
         products: async (parent, args) => {

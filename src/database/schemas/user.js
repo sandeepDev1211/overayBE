@@ -5,6 +5,12 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
+    email: {
+        type: String,
+    },
+    phone: {
+        type: String,
+    },
     dob: {
         type: Date,
         get: (value) => value.toISOString().split("T")[0], // Getter to ensure date-only format

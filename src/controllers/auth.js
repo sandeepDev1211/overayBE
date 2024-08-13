@@ -12,6 +12,8 @@ const registerUser = async (userData) => {
         await user.save();
         const userData = new schemas.user({
             name: user.name,
+            email: user.email,
+            phone: user.phoneNumber,
             _id: user.id,
         });
         userData.save();
@@ -52,7 +54,7 @@ const loginUser = async (loginData) => {
 };
 
 const getUser = async (userId) => {
-    const user = await schemas.user.findOne({ security_userId: userId });
+    const user = await schemas.user.findById(userId);
     return user;
 };
 

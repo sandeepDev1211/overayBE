@@ -175,13 +175,17 @@ export const resolvers = {
                 user_id: contextValue.user._id,
             });
             if (cart) {
-                cart.products.map((item) => {
-                    if (item.productId == product_id) {
-                        !quantity
-                            ? (item.quantity += 1)
-                            : (item.quantity = quantity);
-                    }
-                });
+                const existingProductIndex = cart.products.findIndex(
+                    (x) => x.productId === product_id
+                );
+                if (existingProductIndex !== -1) {
+                    cart.products[existingProductIndex].quantity += quantity;
+                } else {
+                    cart.products.push({
+                        productId: product_id,
+                        quantity: quantity,
+                    });
+                }
                 return cart.save();
             }
             cart = new schemas.cart({
@@ -244,13 +248,11 @@ export const resolvers = {
                     score: score,
                 });
                 product_review = await newReview.save();
-                console.log(product_review);
                 return product_review;
             }
             product_review.review = review;
             product_review.score = score;
             product_review = await product_review.save();
-            console.log(product_review);
             return product_review;
         },
     },

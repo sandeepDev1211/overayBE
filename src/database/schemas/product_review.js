@@ -25,6 +25,7 @@ const productReviewSchema = new Schema({
 
 productReviewSchema.post("save", (doc, next) => {
     try {
+        if (!doc.isNew) return next();
         product
             .findByIdAndUpdate(doc.product_id, {
                 $push: { reviews: doc._id },

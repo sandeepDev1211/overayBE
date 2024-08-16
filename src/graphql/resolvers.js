@@ -137,9 +137,19 @@ export const resolvers = {
         },
         wishlist: async (parent, args, contextValue) => {
             checkAuthentication(contextValue);
-            return await schemas.wishlist.findOne({
-                user_id: contextValue.user._id,
-            });
+            const data = await schemas.wishlist
+                .findOne({
+                    user_id: contextValue.user._id,
+                })
+                .populate({
+                    path: "products",
+                    populate: [
+                        { path: "categories" },
+                        { path: "product_images" },
+                    ],
+                })
+                .exec();
+            return data;
         },
         category: async () => {
             return await schemas.category.find().exec();

@@ -10,7 +10,7 @@ const wishlistSchema = new Schema({
     products: [
         {
             type: Types.ObjectId,
-            ref: "Product",
+            ref: "product",
         },
     ],
 });

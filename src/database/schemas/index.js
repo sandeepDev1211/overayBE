@@ -14,6 +14,7 @@ import lookup from "./lookup.js";
 import email_queue from "./email_queue.js";
 import email_recipient from "./email_recipient.js";
 import reset_password from "./reset_password.js";
+import device_token from "./device_token.js";
 
 export default {
     security_user,
@@ -32,4 +33,5 @@ export default {
     email_queue,
     email_recipient,
     reset_password,
+    device_token,
 };

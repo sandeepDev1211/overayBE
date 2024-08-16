@@ -13,6 +13,7 @@ import admin from "./routes/admin/index.js";
 import shiprocket from "./utils/shiprocket.js";
 import processEmail from "./mail-sender.js";
 import cron from "node-cron";
+import notification from "./routes/notification.js";
 
 (async () => {
     databaseOperations.createConnection();
@@ -52,6 +53,7 @@ import cron from "node-cron";
         })
     );
     app.use("/v1/admin", jwtHelper.verifyAdminToken, admin);
+    app.use("/v1/notification", notification);
     shiprocket.initialize();
     const task = cron.schedule("* * * * *", processEmail);
     task.start();

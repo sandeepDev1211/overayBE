@@ -168,17 +168,22 @@ export const resolvers = {
             address.user_id = contextValue.user._id;
             return schemas.address.create(address);
         },
+        removeAddress: (parent, args, contextValue) => {
+            checkAuthentication(contextValue);
+            return schemas.address.findOneAndDelete({
+                id: args.address_id,
+                user_id: contextValue.user._id,
+            });
+        },
         addProductToCart: async (parent, args, contextValue) => {
             checkAuthentication(contextValue);
             const { product_id, quantity = null } = args.products;
             let cart = await schemas.cart.findOne({
                 user_id: contextValue.user._id,
             });
-            console.log(cart);
             if (cart) {
                 const plainProducts = cart.products.toObject();
 
-                // Find the existing product in the cart
                 const existingProductIndex = plainProducts.findIndex(
                     (x) => x.productId.toString() === product_id.toString()
                 );

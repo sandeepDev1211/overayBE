@@ -100,6 +100,7 @@ export const typeDefs = `#graphql
     }
     type Mutation {
         addAddress(address: AddAddressInput!): Address
+        removeAddress(address_id: String!): Boolean
         addProductToCart(products: CartInput): AddedCart
         removeProductFromCart(product_id: String!): AddedCart
         addProductToWishlist(product_id: String!): AddedWishlist

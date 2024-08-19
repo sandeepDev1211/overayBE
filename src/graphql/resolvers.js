@@ -174,9 +174,13 @@ export const resolvers = {
             let cart = await schemas.cart.findOne({
                 user_id: contextValue.user._id,
             });
+            console.log(cart);
             if (cart) {
-                const existingProductIndex = cart.products.findIndex(
-                    (x) => x.productId === product_id
+                const plainProducts = cart.products.toObject();
+
+                // Find the existing product in the cart
+                const existingProductIndex = plainProducts.findIndex(
+                    (x) => x.productId.toString() === product_id.toString()
                 );
                 if (existingProductIndex !== -1) {
                     cart.products[existingProductIndex].quantity += quantity;

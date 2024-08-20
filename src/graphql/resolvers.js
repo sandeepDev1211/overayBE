@@ -177,7 +177,7 @@ export const resolvers = {
         },
         addProductToCart: async (parent, args, contextValue) => {
             checkAuthentication(contextValue);
-            const { product_id, quantity = null } = args.products;
+            const { product_id, quantity = 1 } = args.products;
             let cart = await schemas.cart.findOne({
                 user_id: contextValue.user._id,
             });

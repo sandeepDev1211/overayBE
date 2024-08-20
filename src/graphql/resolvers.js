@@ -188,7 +188,7 @@ export const resolvers = {
                     (x) => x.productId.toString() === product_id.toString()
                 );
                 if (existingProductIndex !== -1) {
-                    cart.products[existingProductIndex].quantity += quantity;
+                    cart.products[existingProductIndex].quantity = quantity;
                 } else {
                     cart.products.push({
                         productId: product_id,

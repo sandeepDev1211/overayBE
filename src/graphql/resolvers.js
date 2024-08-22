@@ -25,9 +25,11 @@ export const resolvers = {
         },
         products: async (parent, args) => {
             const filter = {};
-            const limit = 10;
-            const start = 0;
-            const sort = {};
+            let limit = 10;
+            let start = 0;
+            let sort = { score: { $meta: "textScore" } };
+            let textSearchApplied = false;
+
             if (args.filter) {
                 const {
                     _id,
@@ -42,6 +44,7 @@ export const resolvers = {
                     sort: sortOption,
                     code,
                     keywords,
+                    query,
                 } = args.filter;
 
                 if (_id) {
@@ -71,6 +74,7 @@ export const resolvers = {
                         ),
                     };
                 }
+
                 if (keywords && keywords.length > 0) {
                     filter.keywords = {
                         $in: keywords,
@@ -90,8 +94,9 @@ export const resolvers = {
                 }
 
                 if (sortOption) {
-                    sort[sortOption.field] =
-                        sortOption.order === "asc" ? 1 : -1;
+                    sort = {
+                        [sortOption.field]: sortOption.order === "asc" ? 1 : -1,
+                    };
                 }
 
                 if (lim !== undefined) {
@@ -101,9 +106,25 @@ export const resolvers = {
                 if (strt !== undefined) {
                     start = strt;
                 }
+
+                // Implement text search
+                if (query) {
+                    filter.$text = { $search: query };
+                    textSearchApplied = true;
+                    // If no custom sort is specified, sort by text score
+                    if (!sortOption) {
+                        sort = { score: { $meta: "textScore" } };
+                    }
+                }
             }
-            return await schemas.product
-                .find(filter)
+
+            const findQuery = schemas.product.find(filter);
+
+            if (textSearchApplied) {
+                findQuery.select({ score: { $meta: "textScore" } });
+            }
+
+            const results = await findQuery
                 .limit(limit)
                 .skip(start)
                 .sort(sort)
@@ -118,6 +139,8 @@ export const resolvers = {
                     ],
                 })
                 .exec();
+
+            return results;
         },
         cart: async (parent, args, contextValue) => {
             checkAuthentication(contextValue);

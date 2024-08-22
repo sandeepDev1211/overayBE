@@ -79,4 +79,11 @@ const productSchema = new Schema({
     },
 });
 
+productSchema.index({
+    name: "text",
+    description: "text",
+    long_description: "text",
+    keywords: "text",
+});
+
 export default model("product", productSchema);

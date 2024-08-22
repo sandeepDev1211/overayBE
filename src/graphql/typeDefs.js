@@ -134,7 +134,8 @@ export const typeDefs = `#graphql
         start: Int,
         limit: Int,
         code: String,
-        keywords: [String]
+        keywords: [String],
+        query: String
     }
     input ReviewInput {
         review: String,

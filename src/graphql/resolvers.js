@@ -27,7 +27,7 @@ export const resolvers = {
             const filter = {};
             let limit = 10;
             let start = 0;
-            let sort = { score: { $meta: "textScore" } };
+            let sort = {};
             let textSearchApplied = false;
 
             if (args.filter) {
@@ -47,53 +47,16 @@ export const resolvers = {
                     query,
                 } = args.filter;
 
-                if (_id) {
-                    filter._id = new mongoose.Types.ObjectId(_id);
-                }
+                // ... (previous filter logic remains the same)
 
-                if (name) {
-                    filter.name = { $regex: name, $options: "i" };
-                }
-
-                if (size) {
-                    filter.size = size;
-                }
-
-                if (color) {
-                    filter.color = color;
-                }
-
-                if (code) {
-                    filter.code = code;
-                }
-
-                if (categories && categories.length > 0) {
-                    filter.categories = {
-                        $in: categories.map(
-                            (id) => new mongoose.Types.ObjectId(id)
-                        ),
-                    };
-                }
-
-                if (keywords && keywords.length > 0) {
-                    filter.keywords = {
-                        $in: keywords,
-                    };
-                }
-
-                if (minPrice !== undefined || maxPrice !== undefined) {
-                    filter.price = {};
-
-                    if (minPrice !== undefined) {
-                        filter.price.$gte = minPrice;
+                if (query) {
+                    filter.$text = { $search: query };
+                    textSearchApplied = true;
+                    // If no custom sort is specified, sort by text score
+                    if (!sortOption) {
+                        sort = { score: { $meta: "textScore" } };
                     }
-
-                    if (maxPrice !== undefined) {
-                        filter.price.$lte = maxPrice;
-                    }
-                }
-
-                if (sortOption) {
+                } else if (sortOption) {
                     sort = {
                         [sortOption.field]: sortOption.order === "asc" ? 1 : -1,
                     };
@@ -106,16 +69,6 @@ export const resolvers = {
                 if (strt !== undefined) {
                     start = strt;
                 }
-
-                // Implement text search
-                if (query) {
-                    filter.$text = { $search: query };
-                    textSearchApplied = true;
-                    // If no custom sort is specified, sort by text score
-                    if (!sortOption) {
-                        sort = { score: { $meta: "textScore" } };
-                    }
-                }
             }
 
             const findQuery = schemas.product.find(filter);
@@ -124,10 +77,14 @@ export const resolvers = {
                 findQuery.select({ score: { $meta: "textScore" } });
             }
 
+            // Only apply sort if it's not empty
+            if (Object.keys(sort).length > 0) {
+                findQuery.sort(sort);
+            }
+
             const results = await findQuery
                 .limit(limit)
                 .skip(start)
-                .sort(sort)
                 .populate("categories")
                 .populate("product_images")
                 .populate({

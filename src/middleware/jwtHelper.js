@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import schemas from "../database/schemas/index.js";
 
 const createToken = (user) => {
     const token = jwt.sign({ user }, process.env.JWT_SECRET, {
@@ -23,7 +24,7 @@ const verifyVerificationToken = (token) => {
     }
 };
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
     if (!req.headers.authorization) {
         return res.status(401).send("Unauthorized request");
     }
@@ -32,6 +33,12 @@ const verifyToken = (req, res, next) => {
         return res.status(401).send("Access denied. No token provided.");
     }
     try {
+        const existingTokens = await schemas.blocked_token.find({
+            token: token,
+        });
+        if (existingTokens.length > 0) {
+            return res.status(401).send("Access denied. Invalid token.");
+        }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded.user;
         next();
@@ -50,7 +57,7 @@ const verifyGraphqlToken = (req) => {
     return user;
 };
 
-const verifyAdminToken = (req, res, next) => {
+const verifyAdminToken = async (req, res, next) => {
     if (!req.headers.authorization) {
         return res.status(401).send("Unauthorized request");
     }
@@ -59,6 +66,12 @@ const verifyAdminToken = (req, res, next) => {
         return res.status(401).send("Access denied. No token provided.");
     }
     try {
+        const existingTokens = await schemas.blocked_token.find({
+            token: token,
+        });
+        if (existingTokens.length > 0) {
+            return res.status(401).send("Access denied. Invalid token.");
+        }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         if (!decoded.user.isInternal)
             return res.status(401).send("Unauthorized request");

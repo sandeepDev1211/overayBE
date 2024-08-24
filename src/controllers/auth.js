@@ -131,6 +131,14 @@ const updatePassword = async (email, password) => {
     return { message: "Password Reset Successful" };
 };
 
+const logout = async (token) => {
+    const blocked_token = new schemas.blocked_token({
+        token,
+    });
+    await blocked_token.save();
+    return { message: "Logout Succesfully" };
+};
+
 export default {
     registerUser,
     loginUser,
@@ -141,4 +149,5 @@ export default {
     forgotPassword,
     verifyOTP,
     updatePassword,
+    logout,
 };

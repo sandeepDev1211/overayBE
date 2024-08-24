@@ -24,6 +24,12 @@ app.post("/login", async (req, res) => {
     res.json(message);
 });
 
+app.get("/logout", jwtHelper.verifyToken, async (req, res) => {
+    const token = req.headers["authorization"].split(" ")[1];
+    const message = await auth.logout(token);
+    res.json(message);
+});
+
 app.post(
     "/user/update",
     jwtHelper.verifyToken,

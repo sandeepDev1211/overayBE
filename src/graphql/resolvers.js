@@ -148,12 +148,15 @@ export const resolvers = {
             address.user_id = contextValue.user._id;
             return schemas.address.create(address);
         },
-        removeAddress: (parent, args, contextValue) => {
+        removeAddress: async (parent, args, contextValue) => {
             checkAuthentication(contextValue);
-            return schemas.address.findOneAndDelete({
-                id: args.address_id,
-                user_id: contextValue.user._id,
-            });
+            const deleted = await schemas.address
+                .findOneAndDelete({
+                    _id: args.address_id,
+                    user_id: contextValue.user._id,
+                })
+                .exec();
+            return !!deleted;
         },
         addProductToCart: async (parent, args, contextValue) => {
             checkAuthentication(contextValue);

@@ -2,6 +2,7 @@ import { Router } from "express";
 import schemas from "../database/schemas/index.js";
 import Razorpay from "razorpay";
 import shiprocket from "../utils/shiprocket.js";
+import logger from "../utils/logger.js";
 const app = Router();
 
 const razorpay = new Razorpay({
@@ -73,8 +74,10 @@ app.post("/initiate", async (req, res) => {
 
 app.post("/complete", async (req, res) => {
     const { paymentId, orderId } = req.body;
-    const payment = await razorpay.payments.fetch(paymentId);
-    if (payment.status !== "captured")
+    const payment = await razorpay.payments
+        .fetch(paymentId)
+        .catch((err) => logger.error(err));
+    if (!payment || payment.status !== "captured")
         return res.send({ message: "Payment not successful" });
     const order = await schemas.order.findOne({ razorpay_orderId: orderId });
     for (const product of order.products) {

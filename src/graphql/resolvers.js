@@ -47,12 +47,55 @@ export const resolvers = {
                     query,
                 } = args.filter;
 
-                // ... (previous filter logic remains the same)
+                if (_id) {
+                    filter._id = new mongoose.Types.ObjectId(_id);
+                }
+
+                if (name) {
+                    filter.name = { $regex: name, $options: "i" };
+                }
+
+                if (size) {
+                    filter.size = size;
+                }
+
+                if (color) {
+                    filter.color = color;
+                }
+
+                if (code) {
+                    filter.code = code;
+                }
+
+                if (categories && categories.length > 0) {
+                    filter.categories = {
+                        $in: categories.map(
+                            (id) => new mongoose.Types.ObjectId(id)
+                        ),
+                    };
+                }
+
+                if (keywords && keywords.length > 0) {
+                    filter.keywords = {
+                        $in: keywords,
+                    };
+                }
+
+                if (minPrice !== undefined || maxPrice !== undefined) {
+                    filter.price = {};
+
+                    if (minPrice !== undefined) {
+                        filter.price.$gte = minPrice;
+                    }
+
+                    if (maxPrice !== undefined) {
+                        filter.price.$lte = maxPrice;
+                    }
+                }
 
                 if (query) {
                     filter.$text = { $search: query };
                     textSearchApplied = true;
-                    // If no custom sort is specified, sort by text score
                     if (!sortOption) {
                         sort = { score: { $meta: "textScore" } };
                     }

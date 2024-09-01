@@ -11,6 +11,9 @@ export const typeDefs = `#graphql
         country: String,
         pincode: String
     }
+    type coupon {
+
+    }
     type ProductImage {
         _id: ID!,
         product_id: String,
@@ -89,6 +92,27 @@ export const typeDefs = `#graphql
         banner_image: String,
         banner_type: String
     }
+    type Coupon {
+        id: ID!
+        code: String!
+        discount_type: DiscountType!
+        discount_value: Float!
+        valid_from: DateTime!
+        valid_until: DateTime!
+        min_order_amount: Float
+        max_discount_amount: Float
+        applicable_products: [ID]
+        applicable_categories: [ID]
+        usage_limit: Int!
+        used_count: Int!
+        is_active: Boolean!
+        created_at: DateTime!
+        updated_at: DateTime!
+    }
+    enum DiscountType {
+        PERCENTAGE
+        FIXED
+    }
     type Query {
         addresses: [Address]
         products(filter: ProductFilter): [Product]
@@ -106,6 +130,8 @@ export const typeDefs = `#graphql
         addProductToWishlist(product_id: String!): AddedWishlist
         removeProductFromWishlist(product_id: String!): AddedWishlist
         addProductReview(review: ReviewInput!): AddedReview
+        coupons(filter: CouponFilterInput): [Coupon!]!
+        coupon(id: ID!): Coupon
     }
     input AddAddressInput {
         name: String,
@@ -145,5 +171,11 @@ export const typeDefs = `#graphql
     input CartInput {
         product_id: ID!
         quantity: Int
+    }
+    input CouponFilterInput {
+        is_active: Boolean
+        valid_now: Boolean
+        min_discount_value: Float
+        max_discount_value: Float
     }
 `;

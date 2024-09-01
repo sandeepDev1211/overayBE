@@ -183,6 +183,49 @@ export const resolvers = {
         lookup: async () => {
             return await schemas.lookup.find().exec();
         },
+        coupons: async (_, { filter }, { models }) => {
+            try {
+                let query = {};
+
+                if (filter) {
+                    if (filter.is_active !== undefined) {
+                        query.is_active = filter.is_active;
+                    }
+
+                    if (filter.valid_now) {
+                        const now = new Date();
+                        query.valid_from = { $lte: now };
+                        query.valid_until = { $gte: now };
+                    }
+
+                    if (filter.min_discount_value !== undefined) {
+                        query.discount_value = {
+                            $gte: filter.min_discount_value,
+                        };
+                    }
+
+                    if (filter.max_discount_value !== undefined) {
+                        query.discount_value = {
+                            ...query.discount_value,
+                            $lte: filter.max_discount_value,
+                        };
+                    }
+                }
+
+                return await models.Coupon.find(query);
+            } catch (error) {
+                console.error("Error fetching coupons:", error);
+                throw new Error("Failed to fetch coupons");
+            }
+        },
+        coupon: async (_, { id }, { models }) => {
+            try {
+                return await models.Coupon.findById(id);
+            } catch (error) {
+                console.error("Error fetching coupon:", error);
+                throw new Error("Failed to fetch coupon");
+            }
+        },
     },
     Mutation: {
         addAddress: (parent, args, contextValue) => {

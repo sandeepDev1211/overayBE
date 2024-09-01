@@ -27,7 +27,8 @@
         "node-cron": "^3.0.3",
         "pino": "^9.2.0",
         "pino-pretty": "^11.2.1",
-        "razorpay": "^2.9.4"
+        "razorpay": "^2.9.4",
+        "twilio": "^5.2.2"
     },
     "type": "module"
 }

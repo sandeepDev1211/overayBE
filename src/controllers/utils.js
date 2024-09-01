@@ -1,5 +1,9 @@
 import schemas from "../database/schemas/index.js";
-
+import logger from "../utils/logger.js";
+const client = require("twilio")(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN
+);
 export default {
     expiresIn: 15,
     createVerificationEmail: async function ({
@@ -41,5 +45,17 @@ export default {
             email_queue_id: email_queue._id,
         });
         email_recipient.save();
+    },
+    sendPhoneVerification: (phoneNumber) => {
+        client.verify.v2
+            .services(process.env.TWILIO_VERIFY_SERVICEID)
+            .verifications.create({ to: phoneNumber, channel: "sms" })
+            .catch((err) => logger.error(err));
+    },
+    verifyPhoneVerification: async (phoneNumber, code) => {
+        const result = await client.verify.v2
+            .services("VA7174633e770d4d43352641327033a398")
+            .verificationChecks.create({ to: phoneNumber, code: code });
+        return result.status === "approved";
     },
 };

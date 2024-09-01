@@ -26,10 +26,6 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    isActive: {
-        type: Boolean,
-        default: false,
-    },
     verificationToken: {
         type: String,
     },
@@ -38,5 +34,12 @@ const userSchema = new Schema({
         default: false,
     },
 });
+
+userSchema.virtual("isActive").get(() => {
+    return this.isEmailVerified && this.isPhoneVerified;
+});
+
+userSchema.set("toJSON", { virtuals: true });
+userSchema.set("toObject", { virtuals: true });
 
 export default model("security_user", userSchema);

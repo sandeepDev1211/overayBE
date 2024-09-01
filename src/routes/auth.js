@@ -87,4 +87,9 @@ app.post("/user/reset-password", async (req, res) => {
     res.json(message);
 });
 
+app.post("/user/phone/verify", async (req, res) => {
+    const { phoneNumber, code } = req.body;
+    res.json(await auth.verifyPhoneNumber({ phoneNumber, code }));
+});
+
 export default app;

@@ -52,6 +52,10 @@ const orderSchema = new Schema({
         type: Number,
         required: true,
     },
+    coupon: {
+        code: String,
+        discount_amount: Number,
+    },
     delivery_charges: {
         type: Number,
         required: true,

@@ -11,7 +11,7 @@ const razorpay = new Razorpay({
 });
 app.post("/initiate", async (req, res) => {
     const { _id: userId } = req.user;
-    const { products, address_id } = req.body;
+    const { products, address_id, coupon_code } = req.body;
     if (!products) return res.sendStatus(400);
     const productsIds = products.map((product) => product._id);
     const productDetails = await schemas.product.find({
@@ -52,6 +52,49 @@ app.post("/initiate", async (req, res) => {
         totalWeight / 1000
     );
     totalAmount += delivery_charges.rate;
+
+    let appliedCoupon = null;
+    if (coupon_code) {
+        appliedCoupon = await Coupon.findOne({
+            code: coupon_code.toUpperCase(),
+            is_active: true,
+            valid_from: { $lte: new Date() },
+            valid_until: { $gte: new Date() },
+            used_count: { $lt: "$usage_limit" },
+        });
+
+        if (appliedCoupon) {
+            if (totalAmount >= (appliedCoupon.min_order_amount || 0)) {
+                let discountAmount = 0;
+                if (appliedCoupon.discount_type === "percentage") {
+                    discountAmount =
+                        totalAmount * (appliedCoupon.discount_value / 100);
+                    if (appliedCoupon.max_discount_amount) {
+                        discountAmount = Math.min(
+                            discountAmount,
+                            appliedCoupon.max_discount_amount
+                        );
+                    }
+                } else {
+                    discountAmount = appliedCoupon.discount_value;
+                }
+                totalAmount -= discountAmount;
+                totalAmount = Math.max(totalAmount, 0);
+            } else {
+                return res.status(400).send({
+                    error: "Minimum order amount not met for this coupon",
+                });
+            }
+        } else {
+            return res.status(400).send({ error: "Invalid or expired coupon" });
+        }
+    }
+
+    const taxRate = 0.05;
+    const sgst = totalAmount * taxRate;
+    const cgst = totalAmount * taxRate;
+    totalAmount += sgst + cgst;
+
     const razorpayOrder = await razorpay.orders.create({
         amount: totalAmount * 100,
         currency: "INR",
@@ -68,6 +111,14 @@ app.post("/initiate", async (req, res) => {
         delivery_charges: delivery_charges.rate,
         courier_company_id: delivery_charges.courier_company_id,
         address: address_id,
+        coupon: appliedCoupon
+            ? {
+                  code: appliedCoupon.code,
+                  discount_amount: couponDiscount,
+              }
+            : null,
+        cgst: cgst,
+        sgst: sgst,
     });
     res.send(await order.save());
 });

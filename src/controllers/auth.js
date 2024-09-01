@@ -23,6 +23,7 @@ const registerUser = async (userData) => {
             name: user.name,
             email: user.email,
         });
+        utils.sendPhoneVerification(userData.phone);
         return { error: false, message: "Verify your email" };
     } catch (error) {
         logger.error(error);
@@ -97,6 +98,11 @@ const verifyUser = async ({ token }) => {
     return "Verified";
 };
 
+const verifyPhoneNumber = async ({ phoneNumber, code }) => {
+    const success = await utils.verifyPhoneVerification(phoneNumber, code);
+    return { success };
+};
+
 const forgotPassword = async (email) => {
     const user = await schemas.security_user.findOne({ email });
     if (!user) {
@@ -150,4 +156,5 @@ export default {
     verifyOTP,
     updatePassword,
     logout,
+    verifyPhoneNumber,
 };

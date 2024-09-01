@@ -1,6 +1,7 @@
 import schemas from "../database/schemas/index.js";
 import logger from "../utils/logger.js";
-const client = require("twilio")(
+import Twilio from "twilio";
+const client = Twilio(
     process.env.TWILIO_ACCOUNT_SID,
     process.env.TWILIO_AUTH_TOKEN
 );

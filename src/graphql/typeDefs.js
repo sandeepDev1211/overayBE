@@ -1,4 +1,5 @@
 export const typeDefs = `#graphql
+    scalar DateTime
     type Address {
         _id: ID!,
         name: String,
@@ -10,9 +11,6 @@ export const typeDefs = `#graphql
         state: String,
         country: String,
         pincode: String
-    }
-    type coupon {
-
     }
     type ProductImage {
         _id: ID!,
@@ -121,6 +119,8 @@ export const typeDefs = `#graphql
         category: [Category]
         banner: [Banner]
         lookup: [Lookup]
+        coupons(filter: CouponFilterInput): [Coupon!]!
+        coupon(id: ID!): Coupon
     }
     type Mutation {
         addAddress(address: AddAddressInput!): Address
@@ -130,8 +130,6 @@ export const typeDefs = `#graphql
         addProductToWishlist(product_id: String!): AddedWishlist
         removeProductFromWishlist(product_id: String!): AddedWishlist
         addProductReview(review: ReviewInput!): AddedReview
-        coupons(filter: CouponFilterInput): [Coupon!]!
-        coupon(id: ID!): Coupon
     }
     input AddAddressInput {
         name: String,

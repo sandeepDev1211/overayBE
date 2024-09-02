@@ -56,7 +56,8 @@ export default {
     verifyPhoneVerification: async (phoneNumber, code) => {
         const result = await client.verify.v2
             .services(process.env.TWILIO_VERIFY_SERVICEID)
-            .verificationChecks.create({ to: phoneNumber, code: code });
+            .verificationChecks.create({ to: phoneNumber, code: code })
+            .catch((error) => logger.error(error));
         return result.status === "approved";
     },
 };

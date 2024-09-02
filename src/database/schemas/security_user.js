@@ -35,7 +35,7 @@ const userSchema = new Schema({
     },
 });
 
-userSchema.virtual("isActive").get(() => {
+userSchema.virtual("isActive").get(function () {
     return this.isEmailVerified && this.isPhoneVerified;
 });
 

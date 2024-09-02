@@ -42,9 +42,9 @@ const registerUser = async (userData) => {
 const loginUser = async (loginData) => {
     const user = await schemas.security_user.findOne({
         email: loginData.email,
-        isActive: true,
     });
     if (!user) return { message: "User not found", error: true };
+    if (!user.isActive) return { message: "User is not active", error: true };
     const isPasswordValid = await bcrypt.compare(
         loginData.password,
         user.password
@@ -93,13 +93,20 @@ const verifyUser = async ({ token }) => {
     }
     user.isEmailVerified = true;
     user.verificationToken = null;
-    user.isActive = true;
     user.save();
     return "Verified";
 };
 
 const verifyPhoneNumber = async ({ phoneNumber, code }) => {
     const success = await utils.verifyPhoneVerification(phoneNumber, code);
+    if (success) {
+        const user = await schemas.security_user.findOne({ phoneNumber });
+        if (!user) {
+            return { success: false, message: "Invalid Verification" };
+        }
+        user.isPhoneVerified = true;
+        user.save();
+    }
     return { success };
 };
 

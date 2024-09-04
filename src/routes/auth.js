@@ -3,7 +3,10 @@ import schemas from "./schemas/index.js";
 import auth from "../controllers/auth.js";
 import jwtHelper from "../middleware/jwtHelper.js";
 import utils from "../utils/index.js";
+import { OAuth2Client } from "google-auth-library";
 const app = Router();
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 app.post("/register", async (req, res) => {
     const user = req.body;
@@ -14,6 +17,16 @@ app.post("/register", async (req, res) => {
         return res.json(message);
     }
     res.status(201).json({ message: "Created" });
+});
+
+app.post("/register/google", async (req, res) => {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    res.json(payload);
 });
 
 app.post("/login", async (req, res) => {

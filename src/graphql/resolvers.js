@@ -212,7 +212,7 @@ export const resolvers = {
                     }
                 }
 
-                return await models.Coupon.find(query);
+                return await schemas.coupon.find(query);
             } catch (error) {
                 console.error("Error fetching coupons:", error);
                 throw new Error("Failed to fetch coupons");
@@ -220,7 +220,7 @@ export const resolvers = {
         },
         coupon: async (_, { id }, { models }) => {
             try {
-                return await models.Coupon.findById(id);
+                return await schemas.coupon.findById(id);
             } catch (error) {
                 console.error("Error fetching coupon:", error);
                 throw new Error("Failed to fetch coupon");

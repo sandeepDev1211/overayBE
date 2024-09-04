@@ -119,7 +119,7 @@ export const typeDefs = `#graphql
         category: [Category]
         banner: [Banner]
         lookup: [Lookup]
-        coupons(filter: CouponFilterInput): [Coupon!]!
+        coupons(filter: CouponFilterInput): [Coupon]!
         coupon(id: ID!): Coupon
     }
     type Mutation {

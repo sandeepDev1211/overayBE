@@ -108,8 +108,8 @@ export const typeDefs = `#graphql
         updated_at: DateTime!
     }
     enum DiscountType {
-        PERCENTAGE
-        FIXED
+        percentage
+        fixed
     }
     type Query {
         addresses: [Address]

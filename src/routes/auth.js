@@ -4,6 +4,7 @@ import auth from "../controllers/auth.js";
 import jwtHelper from "../middleware/jwtHelper.js";
 import utils from "../utils/index.js";
 import { OAuth2Client } from "google-auth-library";
+import logger from "../utils/logger.js";
 const app = Router();
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -21,10 +22,12 @@ app.post("/register", async (req, res) => {
 
 app.post("/register/google", async (req, res) => {
     const { token } = req.body;
-    const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    const ticket = await client
+        .verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        })
+        .catch(console.error);
     const payload = ticket.getPayload();
     res.json(payload);
 });

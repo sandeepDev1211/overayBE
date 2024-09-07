@@ -19,6 +19,7 @@
         "file-stream-rotator": "^1.0.0",
         "firebase-admin": "^12.3.1",
         "fs-extra": "^11.2.0",
+        "google-auth-library": "^9.14.1",
         "graphql": "^16.8.1",
         "joi": "^17.13.1",
         "jsonwebtoken": "^9.0.2",

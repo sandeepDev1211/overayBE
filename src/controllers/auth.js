@@ -24,7 +24,7 @@ const registerUser = async (userData) => {
             email: user.email,
         });
         utils.sendPhoneVerification(userData.phone);
-        return { error: false, message: "Verify your email" };
+        return { error: false, message: "Verify your email and phone number" };
     } catch (error) {
         logger.error(error);
         const errorMessage = {
@@ -45,6 +45,12 @@ const loginUser = async (loginData) => {
     });
     if (!user) return { message: "User not found", error: true };
     if (!user.isActive) return { message: "User is not active", error: true };
+    if (!user.password)
+        return {
+            message:
+                "User is not registered using signup form please use other login menthod",
+            error: true,
+        };
     const isPasswordValid = await bcrypt.compare(
         loginData.password,
         user.password
@@ -152,6 +158,42 @@ const logout = async (token) => {
     return { message: "Logout Succesfully" };
 };
 
+const registerWithGoogle = async (userData) => {
+    const user = new schemas.security_user({
+        isEmailVerified: true,
+        ...userData,
+    });
+    try {
+        await user.save();
+        const userData = new schemas.user({
+            name: user.name,
+            email: user.email,
+            phone: user.phoneNumber,
+            _id: user.id,
+        });
+        userData.save();
+        utils.sendPhoneVerification(userData.phone);
+        return { error: false, message: "Verify your phone number" };
+    } catch (error) {
+        logger.error(error);
+        const errorMessage = {
+            error: true,
+            message:
+                "Something went wrong!! Please contact system administrator",
+        };
+        if (error.message.includes("duplicate")) {
+            errorMessage.message = "User already exists";
+        }
+        return errorMessage;
+    }
+};
+
+const loginWithGoogle = async (email) => {
+    const user = await schemas.security_user.findOne({ email });
+    if (!user) return { message: "User not found", error: true };
+    if (!user.isActive) return { message: "User is not active", error: true };
+    return { message: "loggedIn", token: jwtHelper.createToken(user) };
+};
 export default {
     registerUser,
     loginUser,
@@ -164,4 +206,6 @@ export default {
     updatePassword,
     logout,
     verifyPhoneNumber,
+    registerWithGoogle,
+    loginWithGoogle,
 };

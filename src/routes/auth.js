@@ -21,7 +21,7 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/register/google", async (req, res) => {
-    const { token } = req.body;
+    const { token, email, phoneNumber } = req.body;
     const ticket = await client
         .verifyIdToken({
             idToken: token,
@@ -29,7 +29,13 @@ app.post("/register/google", async (req, res) => {
         })
         .catch(console.error);
     const payload = ticket.getPayload();
-    res.json(payload);
+    if (payload.email !== email) return res.json({ error: "Invalid email" });
+    const message = await auth.registerWithGoogle({
+        email,
+        phoneNumber,
+        name: payload.name,
+    });
+    res.json(message);
 });
 
 app.post("/login", async (req, res) => {
@@ -37,6 +43,24 @@ app.post("/login", async (req, res) => {
     const value = schemas.loginSchema.validate(loginData);
     if (value.error) return res.json({ error: value.error });
     const message = await auth.loginUser(loginData);
+    res.json(message);
+});
+
+app.post("/login/google", async (req, res) => {
+    const { token } = req.body;
+    const ticket = await client
+        .verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        })
+        .catch((error) => {
+            logger.error(error);
+            return res.json({ error: "Invalid token" });
+        });
+    if (!token) {
+        return res.json({ error: "Invalid token" });
+    }
+    const message = await auth.loginWithGoogle(ticket.getPayload().email);
     res.json(message);
 });
 

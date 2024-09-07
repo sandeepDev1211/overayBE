@@ -120,7 +120,7 @@ app.post("/initiate", async (req, res) => {
             coupon: appliedCoupon
                 ? {
                       code: appliedCoupon.code,
-                      discount_amount: couponDiscount,
+                      discount_amount: appliedCoupon.discount_value,
                   }
                 : null,
             cgst: cgst,

@@ -29,6 +29,7 @@ export const resolvers = {
             let start = 0;
             let sort = {};
             let textSearchApplied = false;
+            let specificCodeProvided = false;
 
             if (args.filter) {
                 const {
@@ -65,6 +66,7 @@ export const resolvers = {
 
                 if (code) {
                     filter.code = code;
+                    specificCodeProvided = true;
                 }
 
                 if (categories && categories.length > 0) {
@@ -114,31 +116,46 @@ export const resolvers = {
                 }
             }
 
-            const findQuery = schemas.product.find(filter);
+            let aggregationPipeline = [{ $match: filter }];
+
+            if (!specificCodeProvided) {
+                // If no specific code is provided, group by code
+                aggregationPipeline.push(
+                    {
+                        $group: {
+                            _id: "$code",
+                            doc: { $first: "$$ROOT" },
+                        },
+                    },
+                    { $replaceRoot: { newRoot: "$doc" } }
+                );
+            }
+
+            if (Object.keys(sort).length > 0) {
+                aggregationPipeline.push({ $sort: sort });
+            }
 
             if (textSearchApplied) {
-                findQuery.select({ score: { $meta: "textScore" } });
+                aggregationPipeline.unshift({
+                    $addFields: { score: { $meta: "textScore" } },
+                });
             }
 
-            // Only apply sort if it's not empty
-            if (Object.keys(sort).length > 0) {
-                findQuery.sort(sort);
-            }
+            aggregationPipeline.push({ $skip: start }, { $limit: limit });
 
-            const results = await findQuery
-                .limit(limit)
-                .skip(start)
-                .populate("categories")
-                .populate("product_images")
-                .populate({
-                    path: "reviews",
-                    populate: [
-                        {
-                            path: "user_id",
-                        },
-                    ],
-                })
+            const results = await schemas.product
+                .aggregate(aggregationPipeline)
                 .exec();
+
+            // Populate the results
+            await schemas.product.populate(results, [
+                { path: "categories" },
+                { path: "product_images" },
+                {
+                    path: "reviews",
+                    populate: [{ path: "user_id" }],
+                },
+            ]);
 
             return results;
         },

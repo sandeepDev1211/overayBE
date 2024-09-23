@@ -12,7 +12,7 @@ const razorpay = new Razorpay({
 app.post("/initiate", async (req, res) => {
     try {
         const { _id: userId } = req.user;
-        const { products, address_id, coupon_code } = req.body;
+        const { products, address_id, coupon_code, isCOD } = req.body;
         if (!products) return res.sendStatus(400);
         const productsIds = products.map((product) => product._id);
         const productDetails = await schemas.product.find({
@@ -100,20 +100,22 @@ app.post("/initiate", async (req, res) => {
         const sgst = totalAmount * taxRate;
         const cgst = totalAmount * taxRate;
         totalAmount += sgst + cgst;
+        let razorpayOrder;
+        if (!isCOD) {
+            razorpayOrder = await razorpay.orders.create({
+                amount: Math.round(Number((totalAmount * 100).toFixed(2)) * 10),
+                currency: "INR",
+                receipt: "recipt#1",
+                partial_payment: false,
+            });
+        }
 
-        const razorpayOrder = await razorpay.orders.create({
-            amount: Math.round(Number((totalAmount * 100).toFixed(2)) * 10),
-            currency: "INR",
-            receipt: "recipt#1",
-            partial_payment: false,
-        });
-
-        const order = new schemas.order({
+        const order = await new schemas.order({
             user_id: userId,
             products: orderDetails,
             total_amount: totalAmount,
-            status: "Pending",
-            razorpay_orderId: razorpayOrder.id,
+            status: isCOD ? "Processing" : "Pending",
+            razorpay_orderId: isCOD ? null : razorpayOrder.id,
             delivery_charges: delivery_charges.rate,
             courier_company_id: delivery_charges.courier_company_id,
             address: address_id,
@@ -125,7 +127,15 @@ app.post("/initiate", async (req, res) => {
                 : null,
             cgst: cgst,
             sgst: sgst,
-        });
+        }).save();
+        if (isCOD) {
+            for (const product of order.products) {
+                schemas.product.updateOne(
+                    { _id: product.product_id },
+                    { $inc: { quantity: -product.quantity } }
+                );
+            }
+        }
         res.send(await order.save());
     } catch (err) {
         logger.error(err);

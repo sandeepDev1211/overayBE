@@ -9,6 +9,7 @@ app.post("/create-shipment", async (req, res) => {
         .populate("address")
         .populate("products.product_id")
         .exec();
+    if (!order) return res.json({ message: "Order not found", error: true });
     const orderDetail = {
         order_id: order._id,
         order_date: order.created_at,

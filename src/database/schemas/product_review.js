@@ -37,6 +37,7 @@ productReviewSchema.post("save", (doc, next) => {
 });
 
 productReviewSchema.post("findOneAndDelete", (doc, next) => {
+    if (!doc) return next();
     product.findByIdAndUpdate(doc.product_id, {
         $pull: { product_images: doc._id },
     });

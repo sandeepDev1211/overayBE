@@ -14,6 +14,7 @@ const productImageSchema = new Schema({
 });
 
 productImageSchema.post("save", (doc, next) => {
+    if (!doc) return next();
     try {
         product
             .findByIdAndUpdate(doc.product_id, {
@@ -27,6 +28,7 @@ productImageSchema.post("save", (doc, next) => {
 });
 
 productImageSchema.post("findOneAndDelete", (doc, next) => {
+    if (!doc) return next();
     product.findByIdAndUpdate(doc.product_id, {
         $pull: { product_images: doc._id },
     });

@@ -28,7 +28,7 @@ app.post("/create-shipment", async (req, res) => {
             billing_email: order.address.email,
             billing_phone: order.address.phone_number,
             shipping_is_billing: true,
-            payment_method: "Prepaid",
+            payment_method: isCOD ? "COD" : "Prepaid",
             shipping_charges: 0,
             giftwrap_charges: 0,
             transaction_charges: 0,

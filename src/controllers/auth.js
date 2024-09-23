@@ -61,6 +61,21 @@ const loginUser = async (loginData) => {
     return { message: "loggedIn", token: jwtHelper.createToken(user) };
 };
 
+const loginWithPhone = async (phoneNumber) => {
+    const user = await schemas.security_user.findOne({ phoneNumber });
+    if (!user) return { message: "User not found", error: true };
+    utils.sendPhoneVerification(phoneNumber);
+    return { message: "Verification code sent", error: false };
+};
+
+const loginWithPhoneVerify = async (phoneNumber, code) => {
+    const isValid = await utils.verifyPhoneVerification(phoneNumber, code);
+    if (!isValid) return { message: "Invalid code", error: true };
+    const user = await schemas.security_user.findOne({ phoneNumber });
+    if (!user) return { message: "User not found", error: true };
+    return { message: "loggedIn", token: jwtHelper.createToken(user) };
+};
+
 const getUser = async (userId) => {
     const user = await schemas.user.findById(userId);
     return user;
@@ -208,4 +223,6 @@ export default {
     verifyPhoneNumber,
     registerWithGoogle,
     loginWithGoogle,
+    loginWithPhone,
+    loginWithPhoneVerify,
 };

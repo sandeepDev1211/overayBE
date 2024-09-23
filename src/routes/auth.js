@@ -64,6 +64,18 @@ app.post("/login/google", async (req, res) => {
     res.json(message);
 });
 
+app.post("/login/phone", async (req, res) => {
+    const { phoneNumber } = req.body;
+    const message = await auth.loginWithPhone(phoneNumber);
+    res.json(message);
+});
+
+app.post("/login/phone/verify", async (req, res) => {
+    const { phoneNumber, code } = req.body;
+    const message = await auth.loginWithPhoneVerify(phoneNumber, code);
+    res.json(message);
+});
+
 app.get("/logout", jwtHelper.verifyToken, async (req, res) => {
     const token = req.headers["authorization"].split(" ")[1];
     const message = await auth.logout(token);

@@ -187,7 +187,7 @@ const registerWithGoogle = async (userData) => {
             _id: user.id,
         });
         userData.save();
-        utils.sendPhoneVerification(userData.phone);
+        if (userData.phone) utils.sendPhoneVerification(userData.phone);
         return { error: false, message: "Verify your phone number" };
     } catch (error) {
         logger.error(error);

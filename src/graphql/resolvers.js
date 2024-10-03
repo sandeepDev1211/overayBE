@@ -96,7 +96,6 @@ export const resolvers = {
                 }
 
                 if (query) {
-                    filter.$text = { $search: query };
                     textSearchApplied = true;
                     if (!sortOption) {
                         sort = { score: { $meta: "textScore" } };
@@ -116,7 +115,20 @@ export const resolvers = {
                 }
             }
 
-            let aggregationPipeline = [{ $match: filter }];
+            let aggregationPipeline = [];
+
+            // Add $text search as the first stage if textSearchApplied
+            if (textSearchApplied) {
+                aggregationPipeline.push({
+                    $match: { $text: { $search: args.filter.query } },
+                });
+                aggregationPipeline.push({
+                    $addFields: { score: { $meta: "textScore" } },
+                });
+            }
+
+            // Add the rest of the filter conditions
+            aggregationPipeline.push({ $match: filter });
 
             if (!specificCodeProvided) {
                 // If no specific code is provided, group by code
@@ -133,12 +145,6 @@ export const resolvers = {
 
             if (Object.keys(sort).length > 0) {
                 aggregationPipeline.push({ $sort: sort });
-            }
-
-            if (textSearchApplied) {
-                aggregationPipeline.unshift({
-                    $addFields: { score: { $meta: "textScore" } },
-                });
             }
 
             aggregationPipeline.push({ $skip: start }, { $limit: limit });

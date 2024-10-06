@@ -10,7 +10,7 @@ const couponSchema = new Schema({
     },
     discount_type: {
         type: String,
-        enum: ["percentage", "fixed"],
+        enum: ["percentage", "fixed", "free-shipping", "first-time", "bogo"],
         required: true,
     },
     discount_value: {

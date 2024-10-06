@@ -55,8 +55,6 @@ app.post("/initiate", async (req, res) => {
             delivery_pincode,
             totalWeight / 1000
         );
-        totalAmount += delivery_charges.rate;
-
         let appliedCoupon = null;
         if (coupon_code) {
             appliedCoupon = await schemas.coupon.findOne({
@@ -79,8 +77,23 @@ app.post("/initiate", async (req, res) => {
                                 appliedCoupon.max_discount_amount
                             );
                         }
-                    } else {
+                    } else if (appliedCoupon.discount_type === "fixed") {
                         discountAmount = appliedCoupon.discount_value;
+                    } else if (
+                        appliedCoupon.discount_type === "free_shipping"
+                    ) {
+                        delivery_charges.rate = 0;
+                    } else if (appliedCoupon.discount_type === "first-time") {
+                        const orderCount = await schemas.order.countDocuments({
+                            user_id: userId,
+                        });
+                        if (orderCount === 0) {
+                            discountAmount = coupon.discount_value;
+                        } else {
+                            throw new Error(
+                                "This coupon is only valid for first-time purchases"
+                            );
+                        }
                     }
                     totalAmount -= discountAmount;
                     totalAmount = Math.max(totalAmount, 0);
@@ -95,6 +108,8 @@ app.post("/initiate", async (req, res) => {
                     .send({ error: "Invalid or expired coupon" });
             }
         }
+
+        totalAmount += delivery_charges.rate;
 
         const taxRate = 0.05;
         const sgst = totalAmount * taxRate;

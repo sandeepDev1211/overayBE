@@ -64,12 +64,12 @@ const loginUser = async (loginData) => {
 const loginWithPhone = async (phoneNumber) => {
     const user = await schemas.security_user.findOne({ phoneNumber });
     if (!user) return { message: "User not found", error: true };
-    utils.sendPhoneVerification(phoneNumber);
-    return { message: "Verification code sent", error: false };
+    const requestData = await utils.sendPhoneVerification(phoneNumber);
+    return { message: "Verification code sent", requestData, error: false };
 };
 
-const loginWithPhoneVerify = async (phoneNumber, code) => {
-    const isValid = await utils.verifyPhoneVerification(phoneNumber, code);
+const loginWithPhoneVerify = async (phoneNumber, code, requestId) => {
+    const isValid = await utils.verifyPhoneVerification(requestId, code);
     if (!isValid) return { message: "Invalid code", error: true };
     const user = await schemas.security_user.findOne({ phoneNumber });
     if (!user) return { message: "User not found", error: true };
@@ -118,8 +118,8 @@ const verifyUser = async ({ token }) => {
     return "Verified";
 };
 
-const verifyPhoneNumber = async ({ phoneNumber, code }) => {
-    const success = await utils.verifyPhoneVerification(phoneNumber, code);
+const verifyPhoneNumber = async ({ phoneNumber, code, requestId }) => {
+    const success = await utils.verifyPhoneVerification(requestId, code);
     if (success) {
         const user = await schemas.security_user.findOne({ phoneNumber });
         if (!user) {

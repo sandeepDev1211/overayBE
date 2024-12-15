@@ -1,10 +1,6 @@
 import schemas from "../database/schemas/index.js";
 import logger from "../utils/logger.js";
-import Twilio from "twilio";
-const client = Twilio(
-    process.env.TWILIO_ACCOUNT_SID,
-    process.env.TWILIO_AUTH_TOKEN
-);
+import optless from "../utils/otpless.js";
 export default {
     expiresIn: 15,
     createVerificationEmail: async function ({
@@ -47,17 +43,11 @@ export default {
         });
         email_recipient.save();
     },
-    sendPhoneVerification: (phoneNumber) => {
-        client.verify.v2
-            .services(process.env.TWILIO_VERIFY_SERVICEID)
-            .verifications.create({ to: phoneNumber, channel: "sms" })
-            .catch((err) => logger.error(err));
+    sendPhoneVerification: async (phoneNumber) => {
+        return optless.sendOTP({ phoneNumber });
     },
-    verifyPhoneVerification: async (phoneNumber, code) => {
-        const result = await client.verify.v2
-            .services(process.env.TWILIO_VERIFY_SERVICEID)
-            .verificationChecks.create({ to: phoneNumber, code: code })
-            .catch((error) => logger.error(error));
-        return result.status === "approved";
+    verifyPhoneVerification: async (requestId, code) => {
+        const result = await optless.verifyOTP({ requestId, otp: code });
+        return result.isOTPVerified;
     },
 };

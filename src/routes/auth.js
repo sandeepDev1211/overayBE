@@ -71,8 +71,12 @@ app.post("/login/phone", async (req, res) => {
 });
 
 app.post("/login/phone/verify", async (req, res) => {
-    const { phoneNumber, code } = req.body;
-    const message = await auth.loginWithPhoneVerify(phoneNumber, code);
+    const { phoneNumber, code, requestId } = req.body;
+    const message = await auth.loginWithPhoneVerify(
+        phoneNumber,
+        code,
+        requestId
+    );
     res.json(message);
 });
 
@@ -140,8 +144,8 @@ app.post("/user/reset-password", async (req, res) => {
 });
 
 app.post("/user/phone/verify", async (req, res) => {
-    const { phoneNumber, code } = req.body;
-    res.json(await auth.verifyPhoneNumber({ phoneNumber, code }));
+    const { phoneNumber, code, requestId } = req.body;
+    res.json(await auth.verifyPhoneNumber({ phoneNumber, code, requestId }));
 });
 
 export default app;

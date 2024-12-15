@@ -14,6 +14,7 @@ import shiprocket from "./utils/shiprocket.js";
 import processEmail from "./mail-sender.js";
 import cron from "node-cron";
 import notification from "./routes/notification.js";
+import logger from "./utils/logger.js";
 
 (async () => {
     databaseOperations.createConnection();
@@ -61,4 +62,7 @@ import notification from "./routes/notification.js";
         process.env.PORT,
         console.log(`Listening to port ${process.env.PORT}`)
     );
+    process.on("uncaughtException", (err) => {
+        logger.error(err);
+    });
 })();

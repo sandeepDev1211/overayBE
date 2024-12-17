@@ -15,7 +15,7 @@ class OTPLess {
     async sendOTP({
         phoneNumber,
         expiry = 120,
-        otpLength = 4,
+        otpLength = 6,
         channels = ["SMS"],
         metadata = {},
     }) {

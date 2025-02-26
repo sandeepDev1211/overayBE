@@ -8,19 +8,34 @@
     "extension": ".log",
     "files": [
         {
-            "date": 1717090798351,
-            "name": "./logs/log-2024-05-30.0.log",
-            "hash": "51a85218305fe9a06285726afed535cf"
+            "date": 1740424322290,
+            "name": "./logs/log-2025-02-24.0.log",
+            "hash": "1b6c77b0cf7fa460958f643995791650"
         },
         {
-            "date": 1717090798356,
-            "name": "./logs/error-2024-05-30.0.log",
-            "hash": "60bbdb9f79bdb7e4045a90c95456e6f6"
+            "date": 1740424322292,
+            "name": "./logs/error-2025-02-24.0.log",
+            "hash": "f4c6f267ab1eafad9f4b5e6d93ae8a18"
         },
         {
-            "date": 1717090798358,
-            "name": "./logs/slow-2024-05-30.0.log",
-            "hash": "ac627db6d492c4653cb1a6ce7198c2df"
+            "date": 1740424322293,
+            "name": "./logs/slow-2025-02-24.0.log",
+            "hash": "08250ea3c27c3c0e80c7e84fcb499473"
+        },
+        {
+            "date": 1740556210701,
+            "name": "./logs/log-2025-02-26.0.log",
+            "hash": "5977cff89e918aa8a2a6868fcc837333"
+        },
+        {
+            "date": 1740556210711,
+            "name": "./logs/error-2025-02-26.0.log",
+            "hash": "7f4e676f7e5b61f975cfc81817c4bb0c"
+        },
+        {
+            "date": 1740556210712,
+            "name": "./logs/slow-2025-02-26.0.log",
+            "hash": "756ef7a1545340e9842a829765fc9f49"
         }
     ]
 }

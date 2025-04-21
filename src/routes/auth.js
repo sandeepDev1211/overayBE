@@ -6,6 +6,7 @@ import utils from "../utils/index.js";
 import { OAuth2Client } from "google-auth-library";
 import logger from "../utils/logger.js";
 import security_user from "../database/schemas/security_user.js";
+import axios from 'axios';
 
 const app = Router();
 
@@ -167,11 +168,12 @@ app.post("/user/phone/verify", async (req, res) => {
     res.json(await auth.verifyPhoneNumber({ phoneNumber, code, requestId }));
 });
 
+// routes/auth.js or wherever your route lives
 app.post("/register/facebook", async (req, res) => {
-    try {
+try {
         const { token, email, phoneNumber } = req.body;
-console.log("token",token)
-        // Verify Facebook token and get user info
+        console.log("👉 Received:", req.body);
+
         const fbResponse = await axios.get(`https://graph.facebook.com/me?fields=id,name,email&access_token=${token}`);
         const payload = fbResponse.data;
 
@@ -179,30 +181,21 @@ console.log("token",token)
             return res.status(400).json({ error: true, message: "Invalid email" });
         }
 
-        // Register user
+        console.log("✅ Facebook Response:", payload);
+
         const result = await auth.registerWithGoogle({
             email,
             phoneNumber,
             name: payload.name,
         });
 
-        // Check if user exists in DB
-        const user = await security_user.findOne({ email });
+        return res.json(result);
 
-        if (user) {
-
-console.log("now",user)
-            const jwt = jwtHelper.createToken(user);
-            return res.json({ ...result, token: jwt });
-        }
-
-console.log("not found");
-
-        return res.status(400).json({ error: true, message: "Registration failed" });
-    } catch (error) {
-        console.error("Facebook Auth Error:", error);
-        res.status(500).json({ error: true, message: "Authentication failed" });
+    }  catch (error) {
+        console.error("❌ Facebook Auth Error:", error);
+        return res.status(500).json({ error: true, message: "Authentication failed" });
     }
 });
+
 
 export default app;

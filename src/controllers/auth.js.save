@@ -162,10 +162,8 @@ const updatePassword = async (email, password) => {
         { $set: { password } }
     );
     schemas.reset_password.findOneAndDelete({ email });
-    return { message: "Password Reset Successful" };
-};
-
-const logout = async (token) => {
+    return { message: "Password Reset Succes
+gout = async (token) => {
     const blocked_token = new schemas.blocked_token({
         token,
     });
@@ -173,72 +171,17 @@ const logout = async (token) => {
     return { message: "Logout Succesfully" };
 };
 
-// services/auth.jsuserData.phoneNumber });
-export const registerWithGoogle = async (userData) => {
+const registerWithGoogle = async (userData) => {
+    const user = new schemas.security_user({
+        isEmailVerified: true,
+        ...userData,
+    });
     try {
-        console.log("📍 [Controller] registerWithGoogle called with:", userData);
-
-        // 👉 Check for existing email
-        const existingEmailUser = await schemas.security_user.findOne({ email: userData.email });
-        if (existingEmailUser) {
-            console.log("✅ Existing user found with email:", userData.email);
-            const token = jwtHelper.createToken(existingEmailUser);
-            return {
-                error: false,
-                message:"loggedIn",
-                user: existingEmailUser,
-                token,
-            };
-        }
-
-        // ❌ Block if phone number is already taken by someone else
-        const existingPhoneUser = await schemas.security_user.findOne({ phoneNumber: userData.phoneNumber });
-        if (existingPhoneUser) {
-            return { error: true, message: "Phone number already in use" };
-        }
-
-        // ✅ New user registration
-        const user = new schemas.security_user({
-            isEmailVerified: true,
-            ...userData,
-        });
-
-        const savedUser = await user.save();
-        console.log("✅ security_user created:", savedUser.email);
-
-        const userProfile = new schemas.user({
-            name: savedUser.name,
-            email: savedUser.email,
-            phone: savedUser.phoneNumber,
-            _id: savedUser._id,
-        });
-
-        const savedProfile = await userProfile.save();
-        console.log("✅ user profile created:", savedProfile.email);
-
-        // Optional OTP send
-        if (savedProfile.phone) {
-            try {
-                console.log("📞 Sending phone verification to:", savedProfile.phone);
-                await utils.sendPhoneVerification(savedProfile.phone);
-            } catch (otpError) {
-                console.warn("⚠️ OTP sending failed:", otpError.message);
-            }
-        }
-
-        const token = jwtHelper.createToken(savedUser);
-        return {
-            error: false,
-            message: "loggedIn",
-            user: savedUser,
-            token,
-        };
-
-    } catch (error) {
-        console.error("❌ Error in registerWithGoogle:", error);
-        return { error: true, message: "Registration failed" };
-    }
-};       
+        await user.save();
+        const userData = new schemas.user({
+            name: user.name,
+            email: user.email,
+        
 
 const loginWithGoogle = async (email) => {
     const user = await schemas.security_user.findOne({ email });

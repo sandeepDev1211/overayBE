@@ -25,7 +25,8 @@ app.post("/register", async (req, res) => {
 
 app.post("/register/google", async (req, res) => {
     try {
-        const { token, email, phoneNumber=null } = req.body;
+        const { token, email, phoneNumber = null } = req.body;
+
         const ticket = await client.verifyIdToken({
             idToken: token,
             audience: process.env.GOOGLE_CLIENT_ID,
@@ -42,19 +43,24 @@ app.post("/register/google", async (req, res) => {
             name: payload.name,
         });
 
-        const user = await security_user.findOne({ email });
+        if (result.error) {
+            return res.status(400).json({ error: true, message: result.message });
+        }
 
+        const user = await security_user.findOne({ email });
         if (user) {
             const jwt = jwtHelper.createToken(user);
             return res.json({ ...result, token: jwt });
         }
 
-        return res.status(400).json({ error: true, message: "Registration failed" });
+        return res.status(400).json({ error: true, message: "Registration failed - user not found after registration" });
     } catch (error) {
         console.error("Google Auth Error:", error);
-        res.status(500).json({ error: true, message: "Authentication failed" });
+        res.status(500).json({ error: true, message: error.message || "Authentication failed" });
     }
 });
+
+
 app.post("/login", async (req, res) => {
     const loginData = req.body;
     const value = schemas.loginSchema.validate(loginData);

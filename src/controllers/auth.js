@@ -185,38 +185,42 @@ export const registerWithGoogle = async (userData) => {
             const token = jwtHelper.createToken(existingEmailUser);
             return {
                 error: false,
-                message:"loggedIn",
+                message: "loggedIn",
                 user: existingEmailUser,
                 token,
             };
         }
 
-        // ❌ Block if phone number is already taken by someone else
-        const existingPhoneUser = await schemas.security_user.findOne({ phoneNumber: userData.phoneNumber });
-        if (existingPhoneUser) {
-            return { error: true, message: "Phone number already in use" };
+        // 👉 Prepare userPayload
+        const userPayload = {
+            isEmailVerified: true,
+            ...userData,
+        };
+
+        console.log("nowww", userPayload.phoneNumber);
+
+        // 👉 If phoneNumber is null or undefined, remove it from the payload
+        if (userPayload.phoneNumber === null || userPayload.phoneNumber === undefined) {
+            console.log("Deleting phoneNumber from payload");
+            delete userPayload.phoneNumber;
         }
 
         // ✅ New user registration
-        const user = new schemas.security_user({
-            isEmailVerified: true,
-            ...userData,
-        });
-
+        const user = new schemas.security_user(userPayload);
         const savedUser = await user.save();
         console.log("✅ security_user created:", savedUser.email);
 
         const userProfile = new schemas.user({
             name: savedUser.name,
             email: savedUser.email,
-            phone: savedUser.phoneNumber,
+            phone: savedUser.phoneNumber, // Here, phone will be undefined or not included
             _id: savedUser._id,
         });
 
         const savedProfile = await userProfile.save();
         console.log("✅ user profile created:", savedProfile.email);
 
-        // Optional OTP send
+        // 📞 Optional: Send phone verification if phone exists
         if (savedProfile.phone) {
             try {
                 console.log("📞 Sending phone verification to:", savedProfile.phone);
@@ -236,9 +240,15 @@ export const registerWithGoogle = async (userData) => {
 
     } catch (error) {
         console.error("❌ Error in registerWithGoogle:", error);
-        return { error: true, message: "Registration failed" };
+        return { error: true, message: error.message || "Registration failed" };
     }
-};       
+};
+
+
+
+
+
+       
 
 const loginWithGoogle = async (email) => {
     const user = await schemas.security_user.findOne({ email });

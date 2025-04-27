@@ -13,7 +13,7 @@ const userSchema = new Schema({
     },
     dob: {
         type: Date,
-        get: (value) => value.toISOString().split("T")[0], // Getter to ensure date-only format
+        get: (value) => value?.toISOString().split("T")[0], // safe optional chaining
         set: (value) => new Date(value),
     },
     address: {
@@ -26,5 +26,11 @@ const userSchema = new Schema({
         type: String,
     },
 });
+
+// Create a partial unique index on 'phone' to ignore null values
+userSchema.index(
+    { phone: 1 },
+    { unique: true, partialFilterExpression: { phone: { $exists: true, $ne: null } } }
+);
 
 export default model("user", userSchema);

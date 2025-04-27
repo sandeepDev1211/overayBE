@@ -81,6 +81,21 @@
             "date": 1745674418676,
             "name": "./logs/slow-2025-04-26.0.log",
             "hash": "89b6a9e877344696461ad2dcdf5a31eb"
+        },
+        {
+            "date": 1745736583914,
+            "name": "./logs/log-2025-04-27.0.log",
+            "hash": "7cf811813337ae7eda6a7b86406e046d"
+        },
+        {
+            "date": 1745736583917,
+            "name": "./logs/error-2025-04-27.0.log",
+            "hash": "5266dded5c572aeb65332e48e18269c4"
+        },
+        {
+            "date": 1745736583918,
+            "name": "./logs/slow-2025-04-27.0.log",
+            "hash": "1cc0e51e7a44d73b65eb0955816512af"
         }
     ]
 }

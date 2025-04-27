@@ -25,8 +25,7 @@ app.post("/register", async (req, res) => {
 
 app.post("/register/google", async (req, res) => {
     try {
-        const { token, email, phoneNumber } = req.body;
-console.log(req.body);
+        const { token, email, phoneNumber=null } = req.body;
         const ticket = await client.verifyIdToken({
             idToken: token,
             audience: process.env.GOOGLE_CLIENT_ID,
@@ -47,11 +46,9 @@ console.log(req.body);
 
         if (user) {
             const jwt = jwtHelper.createToken(user);
-console.log("now user found",jwt); 
             return res.json({ ...result, token: jwt });
         }
 
-console.log("here");
         return res.status(400).json({ error: true, message: "Registration failed" });
     } catch (error) {
         console.error("Google Auth Error:", error);

@@ -1,4 +1,6 @@
 import logger from "./logger.js";
+import fetch from "node-fetch";
+
 
 class Shiprocket {
     constructor() {

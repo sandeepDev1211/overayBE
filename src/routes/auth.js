@@ -265,5 +265,28 @@ app.post("/add-address", async (req, res) => {
     }
 });
 
+app.delete("/delete-address", async (req, res) => {
+    try {
+        const { addressId } = req.query;
+
+        // Check if addressId is provided
+        if (!addressId) {
+            return res.status(400).json({ error: "Address ID is required" });
+        }
+
+        // Find and delete the address by ID
+        const deletedAddress = await address.findByIdAndDelete(addressId);
+
+        // If address not found
+        if (!deletedAddress) {
+            return res.status(404).json({ error: "Address not found" });
+        }
+
+        res.status(200).json({ message: "Address deleted successfully", deletedAddress });
+    } catch (error) {
+        console.error("Error deleting address:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 export default app;

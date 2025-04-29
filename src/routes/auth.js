@@ -25,7 +25,7 @@ app.post("/register", async (req, res) => {
 
 app.post("/register/google", async (req, res) => {
     try {
-        const { token, email, phoneNumber = null } = req.body;
+        const { token, email, phoneNumber = null , device_token = null, platform = "android"} = req.body;
 
         const ticket = await client.verifyIdToken({
             idToken: token,
@@ -49,6 +49,16 @@ app.post("/register/google", async (req, res) => {
 
         const user = await security_user.findOne({ email });
         if (user) {
+            if (deviceToken) {
+                await schemas.device_token.findOneAndUpdate(
+                    { user_id: user._id }, 
+                    {
+                        token: deviceToken,
+                        platform: platform || "android",
+                    },
+                    { upsert: true, new: true } 
+                );
+            }
             const jwt = jwtHelper.createToken(user);
             return res.json({ ...result, token: jwt });
         }

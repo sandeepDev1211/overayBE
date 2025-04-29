@@ -6,6 +6,7 @@ import utils from "../utils/index.js";
 import { OAuth2Client } from "google-auth-library";
 import logger from "../utils/logger.js";
 import security_user from "../database/schemas/security_user.js";
+import address from "../database/schemas/address.js"
 import axios from 'axios';
 
 const app = Router();
@@ -207,6 +208,60 @@ try {
     }  catch (error) {
         console.error("❌ Facebook Auth Error:", error);
         return res.status(500).json({ error: true, message: "Authentication failed" });
+    }
+});
+
+
+app.get("/address-list", async (req, res) => {
+    try {
+        const addresses = await address.find({ user_id: req.query.userId });
+        return res.json(addresses);
+    } catch (error) {
+        console.error("Error fetching addresses:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+app.post("/add-address", async (req, res) => {
+    try {
+        const {
+            name,
+            email,
+            phone_number,
+            address_line_1,
+            address_line_2,
+            city,
+            state,
+            country,
+            pincode,
+            userId
+        } = req.body;
+
+        if (
+            !name || !email || !phone_number || !address_line_1 ||
+            !address_line_2 || !city || !state || !country || !pincode
+        ) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
+
+        const userAddress = new address({
+            name,
+            email,
+            phone_number,
+            address_line_1,
+            address_line_2,
+            city,
+            state,
+            country,
+            pincode,
+            user_id: userId
+        });
+
+        await userAddress.save();
+        res.status(201).json({ message: "Address added successfully", userAddress });
+    } catch (error) {
+        console.error("Error adding address:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 

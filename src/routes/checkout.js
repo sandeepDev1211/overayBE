@@ -176,4 +176,31 @@ app.post("/complete", async (req, res) => {
     order.save();
     res.send(order);
 });
+
+app.post("/get-expected-delivery", async (req, res) => {
+    try {
+        // Extract data from the request body
+        const {  deliveryPinCode, weight } = req.body;
+        const pickupPinCode = 226022;
+        // Validate request data
+        if (!pickupPinCode || !deliveryPinCode || !weight) {
+            return res.status(400).json({ error: "All fields (pickupPinCode, deliveryPinCode, weight) are required." });
+        }
+
+        console.log("Fetching expected delivery date...");
+
+        // Call Shiprocket to get the expected delivery date
+        const expectedDelivery = await shiprocket.getExpectedDeliveryDate(pickupPinCode, deliveryPinCode, weight);
+
+        if (expectedDelivery) {
+            console.log("Expected Delivery Date:", expectedDelivery);
+            res.json({ expectedDeliveryDate: expectedDelivery });
+        } else {
+            res.status(404).json({ error: "Could not retrieve expected delivery date Kindly check your pincode." });
+        }
+    } catch (error) {
+        console.error("Error fetching expected delivery date:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 export default app;

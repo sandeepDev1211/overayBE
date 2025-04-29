@@ -77,6 +77,44 @@ class Shiprocket {
             logger.error(error);
         }
     }
+    async getExpectedDeliveryDate(pickupPinCode, deliveryPinCode, weight) {
+        try {
+            if (!this.token) {
+                throw new Error("Shiprocket API token is not initialized.");
+            }
+
+            const response = await fetch(
+                `${this.apiUrl}/courier/serviceability?pickup_postcode=${pickupPinCode}&delivery_postcode=${deliveryPinCode}&weight=${weight}&cod=0`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${this.token}`,
+                    },
+                }
+            ).then((res) => res.json());
+
+            if (response.error) {
+                throw new Error(response.error.message);
+            }
+
+            const company_id = response.data.shiprocket_recommended_courier_id;
+            const delivery_data = response.data.available_courier_companies.find(
+                (x) => x.courier_company_id === company_id
+            );
+
+            if (delivery_data) {
+                const expected_delivery_date = delivery_data.estimated_delivery_days;
+                return expected_delivery_date;
+            } else {
+                throw new Error("No available delivery options for the given pincode.");
+            }
+        } catch (error) {
+            console.log("error",error)
+            logger.error("Error getting expected delivery date:", error.message);
+            return null;
+        }
+    }
 }
 
 export default new Shiprocket();

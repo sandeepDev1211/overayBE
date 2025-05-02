@@ -50,11 +50,11 @@ app.post("/register/google", async (req, res) => {
 
         const user = await security_user.findOne({ email });
         if (user) {
-            if (deviceToken) {
+            if (device_token) {
                 await schemas.device_token.findOneAndUpdate(
                     { user_id: user._id }, 
                     {
-                        token: deviceToken,
+                        token: device_token,
                         platform: platform || "android",
                     },
                     { upsert: true, new: true } 

@@ -1,21 +1,8 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-const bannerSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    banner_image: {
-        type: String,
-        required: true,
-    },
-    banner_type: {
-        type: String,
-        required: true,
-    },
-    banner_url: {
-        type: String,
-    },
+const BannerSchema = new mongoose.Schema({
+    image: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
 });
 
-export default model("banner", bannerSchema);
+export default mongoose.model("Banner", BannerSchema);

@@ -13,13 +13,28 @@ app.post("/initiate", async (req, res) => {
     try {
         const { _id: userId } = req.user;
         const { products, address_id, coupon_code, isCOD } = req.body;
-        if (!products) return res.sendStatus(400);
+
+        console.log("📦 Products:", products);
+        console.log("📍 Address ID:", address_id);
+        console.log("🏷️ Coupon Code:", coupon_code);
+        console.log("💵 isCOD:", isCOD);
+
+        if (!products) {
+            console.log("❌ Missing products");
+            return res.sendStatus(400);
+        }
+
         const productsIds = products.map((product) => product._id);
         const productDetails = await schemas.product.find({
             _id: { $in: productsIds },
         });
-        if (productDetails.length !== products.length)
+
+        console.log("🔍 Fetched product details:", productDetails);
+
+        if (productDetails.length !== products.length) {
+            console.log("❌ Invalid product IDs");
             return res.status(400).send({ error: "Invalid product ids" });
+        }
 
         let totalAmount = 0;
         let totalWeight = 0;
@@ -30,33 +45,51 @@ app.post("/initiate", async (req, res) => {
                 (p) => p._id.toString() === product._id
             );
             if (!productDetail) continue;
-            if (product.quantity > productDetail.quantity)
+
+            if (product.quantity > productDetail.quantity) {
+                console.log(`❌ Insufficient quantity for product ${productDetail.name}`);
                 return res.send({
                     error: `Insufficient quantity for product ${productDetail.name}`,
                 });
+            }
 
-            totalAmount +=
-                (productDetail.price - productDetail.discount) *
-                product.quantity;
+            const subtotal = (productDetail.price - productDetail.discount) * product.quantity;
+            totalAmount += subtotal;
             totalWeight += productDetail.weight * product.quantity;
+
             orderDetails.push({
                 product_id: productDetail._id,
                 price: productDetail.price,
                 discount: productDetail.discount,
                 quantity: product.quantity,
-                subtotal:
-                    (productDetail.price - productDetail.discount) *
-                    product.quantity,
+                subtotal,
             });
         }
+
+        console.log("🧾 Order details computed:", orderDetails);
+        console.log("💰 Total amount:", totalAmount);
+        console.log("⚖️ Total weight (g):", totalWeight);
+
         const address = await schemas.address.findById(address_id);
+        if (!address) {
+            console.log("❌ Address not found");
+            return res.status(400).send({ error: "Invalid address ID" });
+        }
+
         const delivery_pincode = address.pincode;
+        console.log("📦 Delivery pincode:", delivery_pincode);
+
         const delivery_charges = await shiprocket.calculateShippingRate(
             delivery_pincode,
             totalWeight / 1000
         );
+        console.log("🚚 Delivery charges:", delivery_charges);
+
         let appliedCoupon = null;
+
         if (coupon_code) {
+            console.log("🎟️ Checking coupon validity...");
+
             appliedCoupon = await schemas.coupon.findOne({
                 code: coupon_code.toUpperCase(),
                 is_active: true,
@@ -66,11 +99,13 @@ app.post("/initiate", async (req, res) => {
             });
 
             if (appliedCoupon) {
+                console.log("✅ Valid coupon found:", appliedCoupon);
+
                 if (totalAmount >= (appliedCoupon.min_order_amount || 0)) {
                     let discountAmount = 0;
+
                     if (appliedCoupon.discount_type === "percentage") {
-                        discountAmount =
-                            totalAmount * (appliedCoupon.discount_value / 100);
+                        discountAmount = totalAmount * (appliedCoupon.discount_value / 100);
                         if (appliedCoupon.max_discount_amount) {
                             discountAmount = Math.min(
                                 discountAmount,
@@ -79,50 +114,56 @@ app.post("/initiate", async (req, res) => {
                         }
                     } else if (appliedCoupon.discount_type === "fixed") {
                         discountAmount = appliedCoupon.discount_value;
-                    } else if (
-                        appliedCoupon.discount_type === "free_shipping"
-                    ) {
+                    } else if (appliedCoupon.discount_type === "free_shipping") {
                         delivery_charges.rate = 0;
                     } else if (appliedCoupon.discount_type === "first-time") {
                         const orderCount = await schemas.order.countDocuments({
                             user_id: userId,
                         });
                         if (orderCount === 0) {
-                            discountAmount = coupon.discount_value;
+                            discountAmount = appliedCoupon.discount_value;
                         } else {
-                            throw new Error(
-                                "This coupon is only valid for first-time purchases"
-                            );
+                            console.log("❌ Coupon not valid for returning customer");
+                            throw new Error("This coupon is only valid for first-time purchases");
                         }
                     }
+
+                    console.log("💸 Discount amount applied:", discountAmount);
                     totalAmount -= discountAmount;
                     totalAmount = Math.max(totalAmount, 0);
                 } else {
+                    console.log("❌ Minimum order not met for coupon");
                     return res.status(400).send({
                         error: "Minimum order amount not met for this coupon",
                     });
                 }
             } else {
-                return res
-                    .status(400)
-                    .send({ error: "Invalid or expired coupon" });
+                console.log("❌ Invalid or expired coupon");
+                return res.status(400).send({ error: "Invalid or expired coupon" });
             }
         }
 
         totalAmount += delivery_charges.rate;
+        console.log("🚚 Added delivery charges. New total:", totalAmount);
 
         const taxRate = 0.05;
         const sgst = totalAmount * taxRate;
         const cgst = totalAmount * taxRate;
         totalAmount += sgst + cgst;
+
+        console.log("🧾 Tax (SGST + CGST):", sgst + cgst);
+        console.log("📦 Final total amount:", totalAmount);
+
         let razorpayOrder;
         if (!isCOD) {
+            console.log("🔧 Creating Razorpay order...");
             razorpayOrder = await razorpay.orders.create({
                 amount: Math.round(Number((totalAmount * 100).toFixed(2)) * 10),
                 currency: "INR",
                 receipt: "recipt#1",
                 partial_payment: false,
             });
+            console.log("🧾 Razorpay order created:", razorpayOrder.id);
         }
 
         const order = await new schemas.order({
@@ -131,6 +172,7 @@ app.post("/initiate", async (req, res) => {
             total_amount: totalAmount,
             status: isCOD ? "Processing" : "Pending",
             razorpay_orderId: isCOD ? null : razorpayOrder.id,
+            payment_method: isCOD ? "COD" : "Prepaid",
             delivery_charges: delivery_charges.rate,
             courier_company_id: delivery_charges.courier_company_id,
             address: address_id,
@@ -140,23 +182,32 @@ app.post("/initiate", async (req, res) => {
                       discount_amount: appliedCoupon.discount_value,
                   }
                 : null,
-            cgst: cgst,
-            sgst: sgst,
+            cgst,
+            sgst,
         }).save();
+
+        console.log("✅ Order saved:", order._id);
+
         if (isCOD) {
+            console.log("📦 COD order, updating product stock...");
             for (const product of order.products) {
-                schemas.product.updateOne(
+                await schemas.product.updateOne(
                     { _id: product.product_id },
                     { $inc: { quantity: -product.quantity } }
                 );
             }
+            console.log("✅ Stock updated");
         }
-        res.send(await order.save());
-    } catch (err) {
-        logger.error(err);
+
+        return res.send(order);
+    } catch (error) {
+        console.error("❌ Error during /initiate:", error);
+        logger.error(error);
         res.status(500).send({ error: "Internal Server Error" });
     }
 });
+
+
 
 app.post("/complete", async (req, res) => {
     const { paymentId, orderId } = req.body;

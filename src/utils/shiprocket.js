@@ -50,7 +50,7 @@ class Shiprocket {
             logger.error(error);
         }
     }
-    async createOrder(orderDetails, courier_company_id) {
+    async createOrder(orderDetails, courier_company_id = null) {
         try {
             const order = await fetch(`${this.apiUrl}/orders/create/adhoc`, {
                 method: "POST",
@@ -60,10 +60,22 @@ class Shiprocket {
                 },
                 body: JSON.stringify(orderDetails),
             }).then((res) => res.json());
+    
+            // Log the full response to check for any error messages from Shiprocket
+            console.log("Shiprocket Order Response: ", order);
+    
+            if (!order || !order.shipment_id) {
+                throw new Error("Failed to create Shiprocket order");
+            }
+    
             const shipment_details = {
                 shipment_id: order.shipment_id,
-                courier_id: courier_company_id,
             };
+    
+            if (courier_company_id) {
+                shipment_details.courier_id = courier_company_id;
+            }
+    
             const shipment = await fetch(`${this.apiUrl}/courier/assign/awb`, {
                 method: "POST",
                 headers: {
@@ -72,11 +84,17 @@ class Shiprocket {
                 },
                 body: JSON.stringify(shipment_details),
             }).then((res) => res.json());
+    
             return shipment;
         } catch (error) {
-            logger.error(error);
+            // Log detailed error for debugging
+            console.log("error===>>", error);
+            logger.error("Shiprocket Order Creation Failed:", error);
+            throw error; // Re-throw the error after logging
         }
     }
+    
+    
     async getExpectedDeliveryDate(pickupPinCode, deliveryPinCode, weight) {
         try {
             if (!this.token) {

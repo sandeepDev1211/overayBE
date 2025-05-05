@@ -8,6 +8,8 @@ import logger from "../utils/logger.js";
 import security_user from "../database/schemas/security_user.js";
 import address from "../database/schemas/address.js"
 import axios from 'axios';
+import deviceToken from "../database/schemas/device_token.js";
+
 
 const app = Router();
 
@@ -51,7 +53,7 @@ app.post("/register/google", async (req, res) => {
         const user = await security_user.findOne({ email });
         if (user) {
             if (device_token) {
-                await schemas.device_token.findOneAndUpdate(
+                await deviceToken.findOneAndUpdate(
                     { user_id: user._id }, 
                     {
                         token: device_token,

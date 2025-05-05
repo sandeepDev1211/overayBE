@@ -24,12 +24,10 @@ const orderSchema = new Schema({
             },
             discount: {
                 type: Number,
-                required: false,
                 default: 0,
             },
             subtotal: {
                 type: Number,
-                required: false,
                 default: 0,
             },
         },
@@ -50,20 +48,39 @@ const orderSchema = new Schema({
     },
     courier_company_id: {
         type: Number,
-        required: true,
+        required: false, // Optional if using auto-assignment
     },
+    awb: {
+        type: String,
+    },
+    shipment_id: {
+        type: Number,
+    },
+    courier_name: {
+        type: String,
+    },
+    tracking_url: {
+        type: String,
+    },
+    shipment_status: {
+        type: String,
+        default: "Created",
+    },
+    shipment_status_history: [
+        {
+            status: String,
+            updated_at: Date,
+            location: String,
+            remarks: String,
+        },
+    ],
     coupon: {
         code: String,
         discount_amount: Number,
     },
     delivery_charges: {
         type: Number,
-        required: true,
         default: 0,
-    },
-    created_at: {
-        type: Date,
-        default: Date.now,
     },
     sgst: {
         type: Number,
@@ -73,16 +90,15 @@ const orderSchema = new Schema({
         type: Number,
         default: 0,
     },
-    updated_at: {
-        type: Date,
-        default: Date.now,
-    },
     razorpay_orderId: {
         type: String,
     },
-    awb: {
+    payment_method:{
         type: String,
-    },
+ 
+    }
+}, {
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
 });
 
 export default model("order", orderSchema);

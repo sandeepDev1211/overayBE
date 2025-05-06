@@ -19,9 +19,8 @@ const upload = multer({ storage });
 
 app.post("/upload-banner", upload.single("image"), async (req, res) => {
     try {
-        console.log("nowowow")
 
-        const filePath = `/${req.file.filename}`;
+        const filePath = `${req.file.filename}`;
         const banner = await schemas.banner.create({ image: filePath });
         res.status(201).json({ message: "Banner uploaded", banner });
     } catch (err) {
@@ -32,7 +31,6 @@ app.post("/upload-banner", upload.single("image"), async (req, res) => {
 // GET /banners
 app.post("/banners", async (req, res) => {
     try {
-        console.log("nowowow")
         const banners = await schemas.banner.find().sort({ createdAt: -1 });
         res.json(banners);
     } catch (err) {
@@ -42,7 +40,7 @@ app.post("/banners", async (req, res) => {
 });
 
 // DELETE /banner/:id
-app.delete("/banner/:id", async (req, res) => {
+app.post("/banner/:id", async (req, res) => {
     try {
         const banner = await schemas.banner.findByIdAndDelete(req.params.id);
         if (!banner) return res.status(404).json({ message: "Banner not found" });

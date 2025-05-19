@@ -3,6 +3,8 @@ import schemas from "../database/schemas/index.js";
 import Razorpay from "razorpay";
 import shiprocket from "../utils/shiprocket.js";
 import logger from "../utils/logger.js";
+import axios from "axios";
+
 const app = Router();
 
 const razorpay = new Razorpay({
@@ -254,4 +256,34 @@ app.post("/get-expected-delivery", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+app.get("/get-pincode-details", async (req, res) => {
+    console.log("nqlwiioqwio")
+    const { pincode } = req.query;
+    console.log("nqlwiioqwio",pincode)
+  
+    if (!pincode) {
+      return res.status(400).json({ error: "Pincode is required in query params." });
+    }
+  
+    try {
+      const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);
+      const data = response.data[0];
+  console.log("nooowow===",data)
+      if (data.Status === "Success" && data.PostOffice && data.PostOffice.length > 0) {
+        const postOffice = data.PostOffice[0];
+        return res.json({
+          pincode: pincode,
+          city: postOffice.District,
+          state: postOffice.State,
+          country: postOffice.Country || "India",
+        });
+      } else {
+        return res.status(404).json({ error: "Invalid pincode or data not found." });
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err.message);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
 export default app;

@@ -4,6 +4,8 @@ import Razorpay from "razorpay";
 import shiprocket from "../utils/shiprocket.js";
 import logger from "../utils/logger.js";
 import axios from "axios";
+import https from "https";
+
 
 const app = Router();
 
@@ -258,18 +260,26 @@ app.post("/get-expected-delivery", async (req, res) => {
 });
 
 app.get("/get-pincode-details", async (req, res) => {
-    console.log("nqlwiioqwio")
+    console.log("Incoming request to /get-pincode-details");
     const { pincode } = req.query;
-    console.log("nqlwiioqwio",pincode)
+    console.log("Received pincode:", pincode);
   
     if (!pincode) {
       return res.status(400).json({ error: "Pincode is required in query params." });
     }
   
     try {
-      const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);
+      // Disable SSL verification (only for dev/testing)
+      const agent = new https.Agent({ rejectUnauthorized: false });
+  
+      const response = await axios.get(
+        `https://api.postalpincode.in/pincode/${pincode}`,
+        { httpsAgent: agent }
+      );
+  
       const data = response.data[0];
-  console.log("nooowow===",data)
+      console.log("API response:", data);
+  
       if (data.Status === "Success" && data.PostOffice && data.PostOffice.length > 0) {
         const postOffice = data.PostOffice[0];
         return res.json({
